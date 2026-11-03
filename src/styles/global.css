@@ -1,0 +1,53 @@
+:root {
+  color-scheme: light;
+  --font: 'Hanken Grotesk Variable', system-ui, sans-serif;
+
+  /* Moss ground, sage card */
+  --ground: #d2d8cb;
+  --card: #fbfcfb;
+  --strip: #eef2ef;
+  --ink: #24302b;
+  --ink-2: #3f4b46;
+  --ink-3: #4e5b55;
+  --rule: rgb(36 48 43 / 0.16);
+  --caption: #31362b;
+
+  --grass-0: rgb(36 48 43 / 0.08);
+  --grass-1: #c6d4b9;
+  --grass-2: #9db48c;
+  --grass-3: #728e62;
+  --grass-4: #4a653f;
+
+  --ring-a: #e7ebe2;
+  --ring-b: #d8dfd0;
+  --ring-now: #cfe6d1;
+  --ring-line: rgb(44 52 35 / 0.32);
+
+  --gutter: 48px;
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+
+@media (max-width: 640px) {
+  :root {
+    --gutter: 20px;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Small uppercase heading used across slides */
+.eyebrow {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}

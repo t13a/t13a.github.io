@@ -1,0 +1,23 @@
+---
+// One carousel item. `group` marks repository slides the ticker picks from at random;
+// `requiresScript` hides slides that are meaningless without JavaScript, like a live clock.
+interface Props {
+  label: string;
+  group?: 'pinned' | 'other';
+  requiresScript?: boolean;
+}
+
+const { label, group, requiresScript = false } = Astro.props;
+---
+
+<li
+  class="slide"
+  role="group"
+  aria-roledescription="slide"
+  aria-label={label}
+  data-group={group}
+  data-requires-script={requiresScript || undefined}
+  hidden={requiresScript}
+>
+  <slot />
+</li>

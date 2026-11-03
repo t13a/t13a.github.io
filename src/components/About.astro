@@ -1,0 +1,63 @@
+---
+import { CAREER_START_YEAR, GITHUB_LOGIN } from '../config';
+
+// Counted at build time; the monthly rebuild on 1 January moves it on.
+const years = new Date().getFullYear() - CAREER_START_YEAR;
+---
+
+<footer class="about">
+  <p>
+    {years} years of Dev and Ops experience across many companies.<br />
+    Self-hosting and open source at home.
+  </p>
+  <a href={`https://github.com/${GITHUB_LOGIN}`}>github.com/{GITHUB_LOGIN}</a>
+</footer>
+
+<style>
+  .about {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px 24px;
+    padding: 28px var(--gutter);
+  }
+
+  p {
+    flex: 1 1 320px;
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-2);
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 20px;
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--card);
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 640px) {
+    .about {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    p {
+      flex: none;
+      font-size: 15px;
+    }
+  }
+</style>

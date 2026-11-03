@@ -1,0 +1,332 @@
+---
+import { Icon } from 'astro-icon/components';
+import { CAROUSEL } from '../config';
+
+// Without JavaScript this is a CSS scroll-snap carousel of every slide. The script turns it into
+// an auto-advancing ticker: random repository picks, shuffled order, one slide at a time.
+---
+
+<live-ticker style={`--slide-duration: ${CAROUSEL.slideSeconds}s`}>
+  <section class="ticker" aria-roledescription="carousel" aria-label="Live feed">
+    <ul class="track">
+      <slot />
+    </ul>
+    <div class="controls" hidden>
+      <ol class="progress" aria-hidden="true"></ol>
+      <button class="pause" type="button" aria-label="Pause rotation">
+        <Icon is:inline name="lucide:pause" aria-hidden="true" class="when-playing" />
+        <Icon is:inline name="lucide:play" aria-hidden="true" class="when-paused" />
+      </button>
+    </div>
+  </section>
+</live-ticker>
+
+<style>
+  /* --slide-body is the room every slide gets, so the ticker keeps one height as it turns. */
+  live-ticker {
+    display: block;
+    --slide-body: 142px;
+    --progress: rgb(78 91 85 / 0.4);
+  }
+
+  @media (max-width: 640px) {
+    live-ticker {
+      --slide-body: 164px;
+    }
+  }
+
+  .ticker {
+    position: relative;
+    background: var(--strip);
+  }
+
+  .track {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  .track > :global(.slide) {
+    flex: 0 0 100%;
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: calc(var(--slide-body) + 48px);
+    padding: 24px var(--gutter);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    scroll-snap-align: start;
+  }
+
+  .track > :global(.slide[hidden]) {
+    display: none;
+  }
+
+  /* Dots under the slides where the browser can draw CSS carousels by itself */
+  @supports selector(::scroll-marker) {
+    .track {
+      scroll-marker-group: after;
+    }
+
+    .track::scroll-marker-group {
+      background: var(--strip);
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      padding-bottom: 12px;
+    }
+
+    .track > :global(.slide)::scroll-marker {
+      content: '';
+      width: 8px;
+      height: 8px;
+      margin: 8px;
+      border-radius: 50%;
+      background: var(--rule);
+    }
+
+    .track > :global(.slide)::scroll-marker:target-current {
+      background: var(--progress);
+    }
+  }
+
+  /* Enhanced: all slides share one grid cell, so the ticker is as tall as its tallest slide. */
+  live-ticker[data-enhanced] .track {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    overflow: visible;
+    scroll-marker-group: none;
+  }
+
+  live-ticker[data-enhanced] .track > :global(.slide) {
+    grid-area: 1 / 1;
+    min-height: calc(var(--slide-body) + 76px);
+    padding-bottom: 52px;
+    visibility: hidden;
+  }
+
+  live-ticker[data-enhanced] .track > :global(.slide[data-active]) {
+    visibility: visible;
+  }
+
+  .controls {
+    position: absolute;
+    right: 10px;
+    bottom: 0;
+    left: var(--gutter);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .controls[hidden] {
+    display: none;
+  }
+
+  .progress {
+    flex: 1;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    gap: 6px;
+  }
+
+  .progress :global(li) {
+    flex: 1;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--rule);
+    overflow: hidden;
+  }
+
+  .progress :global(span) {
+    display: block;
+    height: 100%;
+    background: var(--progress);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .progress :global([data-done] span) {
+    transform: none;
+  }
+
+  .progress :global([data-current] span) {
+    animation: fill var(--slide-duration) linear forwards;
+  }
+
+  live-ticker:is([data-paused], [data-held]) .progress :global(span) {
+    animation-play-state: paused;
+  }
+
+  @keyframes fill {
+    to {
+      transform: none;
+    }
+  }
+
+  .pause {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--ink-2);
+    cursor: pointer;
+  }
+
+  .pause:focus-visible {
+    outline: 2px solid var(--ink);
+  }
+
+  .pause svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Lucide draws outlines; fill them for solid play and pause marks. The icons are inlined
+     because styles do not reach into a sprite's <use> copies. */
+  .pause svg :global(*) {
+    fill: currentColor;
+  }
+
+  live-ticker[data-paused] .when-playing,
+  live-ticker:not([data-paused]) .when-paused {
+    display: none;
+  }
+</style>
+
+<style is:global>
+  /* How slide contents enter. Slides mark elements with data-enter; the ticker restarts these
+     animations each time a slide becomes active by toggling data-active. */
+  live-ticker[data-enhanced] .slide[data-active] [data-enter] {
+    animation: 560ms var(--ease-out) var(--delay, 40ms) both;
+  }
+
+  live-ticker[data-enhanced] .slide[data-active] [data-enter='rise'] { animation-name: enter-rise; }
+  live-ticker[data-enhanced] .slide[data-active] [data-enter='left'] { animation-name: enter-left; }
+  live-ticker[data-enhanced] .slide[data-active] [data-enter='right'] { animation-name: enter-right; --delay: 200ms; }
+  live-ticker[data-enhanced] .slide[data-active] [data-enter='pop'] { animation-name: enter-pop; animation-timing-function: var(--ease-bounce); --delay: 120ms; }
+  live-ticker[data-enhanced] .slide[data-active] [data-enter='sprout'] { animation-name: enter-sprout; animation-duration: 360ms; animation-timing-function: var(--ease-bounce); }
+
+  @keyframes enter-rise { from { opacity: 0; transform: translateY(18px); } }
+  @keyframes enter-left { from { opacity: 0; transform: translateX(-32px); } }
+  @keyframes enter-right { from { opacity: 0; transform: translateX(32px); } }
+  @keyframes enter-pop { from { opacity: 0; transform: scale(0.55) rotate(-12deg); } }
+  @keyframes enter-sprout { from { opacity: 0; transform: scale(0.2); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-enter] {
+      animation: none !important;
+    }
+  }
+</style>
+
+<script>
+  import { CAROUSEL } from '../config';
+
+  function shuffle<T>(items: T[]): T[] {
+    const a = [...items];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  const DURATION = CAROUSEL.slideSeconds * 1000;
+
+  class LiveTicker extends HTMLElement {
+    #slides: HTMLElement[] = [];
+    #segments: HTMLElement[] = [];
+    #index = 0;
+    #timer = 0;
+    #remaining = DURATION;
+    #startedAt = 0;
+
+    connectedCallback() {
+      const track = this.querySelector<HTMLElement>('.track')!;
+      const all = [...track.querySelectorAll<HTMLElement>(':scope > .slide')];
+
+      // Keep a random few repositories from each group, then shuffle everything.
+      const keep = new Set([
+        ...shuffle(all.filter((s) => s.dataset.group === 'pinned')).slice(0, CAROUSEL.pinnedPicks),
+        ...shuffle(all.filter((s) => s.dataset.group === 'other')).slice(0, CAROUSEL.otherPicks),
+        ...all.filter((s) => !s.dataset.group),
+      ]);
+      for (const s of all) if (!keep.has(s)) s.remove();
+      this.#slides = shuffle([...keep]);
+      this.#slides.forEach((s, i) => {
+        s.hidden = false;
+        s.setAttribute('aria-label', `${i + 1} of ${this.#slides.length}: ${s.getAttribute('aria-label')}`);
+        track.append(s);
+      });
+
+      const progress = this.querySelector('.progress')!;
+      this.#segments = this.#slides.map(() => progress.appendChild(document.createElement('li')));
+      this.#segments.forEach((li) => li.appendChild(document.createElement('span')));
+
+      const button = this.querySelector<HTMLButtonElement>('.pause')!;
+      button.addEventListener('click', () => {
+        const paused = this.toggleAttribute('data-paused');
+        button.setAttribute('aria-label', paused ? 'Resume rotation' : 'Pause rotation');
+        this.#sync();
+      });
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) button.click();
+
+      // Hold still while the pointer or keyboard focus is inside, so links can be followed.
+      const section = this.querySelector<HTMLElement>('.ticker')!;
+      const hold = (on: boolean) => {
+        this.toggleAttribute('data-held', on);
+        this.#sync();
+      };
+      section.addEventListener('pointerenter', () => hold(true));
+      section.addEventListener('pointerleave', () => hold(section.contains(document.activeElement)));
+      section.addEventListener('focusin', () => hold(true));
+      section.addEventListener('focusout', (e) => hold(section.contains(e.relatedTarget as Node) || section.matches(':hover')));
+
+      this.querySelector<HTMLElement>('.controls')!.hidden = false;
+      this.toggleAttribute('data-enhanced', true);
+      this.#show(0);
+    }
+
+    disconnectedCallback() {
+      clearTimeout(this.#timer);
+    }
+
+    #show(next: number) {
+      this.#index = next % this.#slides.length;
+      this.#slides.forEach((s, i) => s.toggleAttribute('data-active', i === this.#index));
+      this.#segments.forEach((li, i) => {
+        li.toggleAttribute('data-done', i < this.#index);
+        li.toggleAttribute('data-current', i === this.#index);
+      });
+      this.#remaining = DURATION;
+      this.#startedAt = 0;
+      this.#sync();
+    }
+
+    // The timer counts down the current slide's remaining time and stops while paused or held;
+    // the progress bar is only its picture, paused by the same attributes in CSS.
+    #sync() {
+      if (this.#startedAt) this.#remaining -= performance.now() - this.#startedAt;
+      this.#startedAt = 0;
+      clearTimeout(this.#timer);
+      if (this.matches('[data-paused], [data-held]')) return;
+      this.#startedAt = performance.now();
+      this.#timer = window.setTimeout(() => this.#show(this.#index + 1), Math.max(0, this.#remaining));
+    }
+  }
+
+  customElements.define('live-ticker', LiveTicker);
+</script>

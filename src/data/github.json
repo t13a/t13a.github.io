@@ -1,0 +1,166 @@
+{
+  "generatedAt": "2026-11-03T14:46:05.052Z",
+  "login": "t13a",
+  "createdAt": "2013-12-08T07:43:28Z",
+  "repositories": 77,
+  "stars": 78,
+  "contributions": {
+    "yearly": {
+      "2013": 1,
+      "2014": 2,
+      "2015": 0,
+      "2016": 0,
+      "2017": 3,
+      "2018": 310,
+      "2019": 173,
+      "2020": 64,
+      "2021": 26,
+      "2022": 3,
+      "2023": 315,
+      "2024": 88,
+      "2025": 34,
+      "2026": 465
+    },
+    "lastYear": {
+      "start": "2025-11-02",
+      "total": 465,
+      "levels": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001011100121110010000111100000110111111111011100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000342332121011002401"
+    }
+  },
+  "featured": {
+    "pinned": [
+      {
+        "nameWithOwner": "t13a/parsonnet",
+        "url": "https://github.com/t13a/parsonnet",
+        "description": "A parser combinator implemented by Jsonnet. **No production quality**. This is my learning project trying to use Jsonnet as a purely functional programming language.",
+        "stars": 0,
+        "forks": 0,
+        "committedAt": "2019-01-28T06:10:27Z"
+      },
+      {
+        "nameWithOwner": "t13a/dockerfile-gitit-experimental",
+        "url": "https://github.com/t13a/dockerfile-gitit-experimental",
+        "description": "Dockerfile for Gitit with experimental features",
+        "stars": 2,
+        "forks": 0,
+        "committedAt": "2020-06-28T07:31:52Z"
+      },
+      {
+        "nameWithOwner": "awslabs/git-secrets",
+        "url": "https://github.com/awslabs/git-secrets",
+        "description": "Prevents you from committing secrets and credentials into git repositories",
+        "stars": 13425,
+        "forks": 1251,
+        "committedAt": "2025-09-17T20:31:20Z"
+      },
+      {
+        "nameWithOwner": "t13a/dm-integrity-benchmarks",
+        "url": "https://github.com/t13a/dm-integrity-benchmarks",
+        "description": "Measure dm-integrity IO performance using Fio.",
+        "stars": 25,
+        "forks": 1,
+        "committedAt": "2023-08-29T14:49:27Z"
+      },
+      {
+        "nameWithOwner": "t13a/krm-function-yq-eval",
+        "url": "https://github.com/t13a/krm-function-yq-eval",
+        "description": "A Kubernetes Resource Model (KRM) function that evaluates yq expressions on Kubernetes manifests.",
+        "stars": 0,
+        "forks": 0,
+        "committedAt": "2025-10-13T06:17:46Z"
+      },
+      {
+        "nameWithOwner": "t13a/libvirt-container",
+        "url": "https://github.com/t13a/libvirt-container",
+        "description": "A containerized Libvirt, disposable virtualization infrastructure intended for development. **Do not use for production**.",
+        "stars": 2,
+        "forks": 1,
+        "committedAt": "2026-11-01T12:31:16Z"
+      }
+    ],
+    "popular": [
+      {
+        "nameWithOwner": "t13a/dm-integrity-benchmarks",
+        "url": "https://github.com/t13a/dm-integrity-benchmarks",
+        "description": "Measure dm-integrity IO performance using Fio.",
+        "stars": 25,
+        "forks": 1,
+        "committedAt": "2023-08-29T14:49:27Z"
+      },
+      {
+        "nameWithOwner": "t13a/gitit-bootstrap-theme",
+        "url": "https://github.com/t13a/gitit-bootstrap-theme",
+        "description": "Bootstrap theme for Gitit, a Wiki backed with Git, Darcs, Mercurial, and Pandoc.",
+        "stars": 6,
+        "forks": 6,
+        "committedAt": "2019-09-03T03:02:22Z"
+      },
+      {
+        "nameWithOwner": "t13a/helm-chart-syncthing",
+        "url": "https://github.com/t13a/helm-chart-syncthing",
+        "description": "",
+        "stars": 5,
+        "forks": 5,
+        "committedAt": "2018-10-29T09:13:27Z"
+      },
+      {
+        "nameWithOwner": "t13a/gitit-plugins",
+        "url": "https://github.com/t13a/gitit-plugins",
+        "description": "Plugins for Gitit, a Wiki backed with Git, Darcs, Mercurial, and Pandoc.",
+        "stars": 6,
+        "forks": 0,
+        "committedAt": "2020-06-28T07:26:23Z"
+      },
+      {
+        "nameWithOwner": "t13a/archlinux-cloud",
+        "url": "https://github.com/t13a/archlinux-cloud",
+        "description": "An Arch Linux cloud installation image.",
+        "stars": 6,
+        "forks": 0,
+        "committedAt": "2020-11-03T03:12:55Z"
+      }
+    ],
+    "recent": [
+      {
+        "nameWithOwner": "t13a/rehearse",
+        "url": "https://github.com/t13a/rehearse",
+        "description": "A harness for letting an AI agent organize large files without risking them.",
+        "stars": 0,
+        "forks": 0,
+        "committedAt": "2026-11-01T13:22:52Z"
+      },
+      {
+        "nameWithOwner": "t13a/libvirt-container",
+        "url": "https://github.com/t13a/libvirt-container",
+        "description": "A containerized Libvirt, disposable virtualization infrastructure intended for development. **Do not use for production**.",
+        "stars": 2,
+        "forks": 1,
+        "committedAt": "2026-11-01T12:31:16Z"
+      },
+      {
+        "nameWithOwner": "t13a/virtgen",
+        "url": "https://github.com/t13a/virtgen",
+        "description": "A virtual machine provisioner generator for libvirt.",
+        "stars": 0,
+        "forks": 0,
+        "committedAt": "2026-11-01T11:16:00Z"
+      },
+      {
+        "nameWithOwner": "t13a/astro-on-swa-scaffolding",
+        "url": "https://github.com/t13a/astro-on-swa-scaffolding",
+        "description": "",
+        "stars": 0,
+        "forks": 0,
+        "committedAt": "2026-04-05T09:28:34Z"
+      },
+      {
+        "nameWithOwner": "t13a/type-safe-azure-functions",
+        "url": "https://github.com/t13a/type-safe-azure-functions",
+        "description": "Type-safe implementation and invocation of Azure Functions like Hono RPC or Astro Actions.",
+        "stars": 0,
+        "forks": 0,
+        "committedAt": "2026-03-28T12:59:30Z"
+      }
+    ]
+  }
+}

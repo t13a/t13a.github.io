@@ -1,0 +1,81 @@
+---
+import { Image } from 'astro:assets';
+import avatar from '../assets/avatar.png';
+---
+
+<header class="profile">
+  <Image class="avatar" src={avatar} alt="Tatsuya Kitagawa" width={132} height={132} densities={[1, 2]} />
+  <div class="who">
+    <h1>Tatsuya Kitagawa</h1>
+    <p class="role">Senior Software Engineer</p>
+    <p class="where">Tokyo, Japan · CKA · CKS</p>
+  </div>
+</header>
+
+<style>
+  .profile {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 24px 32px;
+    padding: var(--gutter) var(--gutter) 40px;
+  }
+
+  .avatar {
+    flex: none;
+    width: 132px;
+    height: 132px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .who {
+    flex: 1 1 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(32px, 5vw, 44px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  .role {
+    font-size: 19px;
+    font-weight: 500;
+    color: var(--ink-2);
+  }
+
+  .where {
+    font-size: 16px;
+    color: var(--ink-3);
+  }
+
+  @media (max-width: 640px) {
+    .profile {
+      flex-direction: column;
+      gap: 20px;
+      padding-block: 32px;
+      text-align: center;
+    }
+
+    .avatar {
+      width: 112px;
+      height: 112px;
+    }
+
+    .who {
+      flex: none;
+      align-items: center;
+      gap: 6px;
+    }
+  }
+</style>

@@ -1,0 +1,161 @@
+---
+import { Icon } from 'astro-icon/components';
+import { github } from '../../lib/data';
+import { treeRings } from '../../lib/shapes';
+
+// Everything since the account was created. The tree-ring chart (one ring per year, its area
+// proportional to that year's contributions) is on hold; set showRings to bring it back.
+const showRings = false;
+const years = Object.keys(github.contributions.yearly).sort();
+const counts = years.map((y) => github.contributions.yearly[y]);
+const rings = treeRings(counts);
+const busiest = years
+  .map((year, i) => ({ year, count: counts[i] }))
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 3)
+  .map((x) => x.year)
+  .sort();
+const label = `Tree rings, one per year from ${years[0]} to ${years.at(-1)}, wider in busier years. The widest are ${busiest.join(', ')}.`;
+
+const stats = [
+  { value: counts.reduce((a, b) => a + b, 0), label: 'contributions' },
+  { value: github.repositories, label: 'repositories' },
+  { value: github.stars, label: 'stars earned' },
+];
+---
+
+<div class="summary">
+  <p class="headline" data-enter="left">
+    <span>Since {new Date(github.createdAt).getUTCFullYear()}</span>
+    <span>on <Icon name="octicon:mark-github-16" aria-hidden="true" /> GitHub</span>
+  </p>
+  {
+    showRings && (
+      <figure data-enter="pop">
+        <svg role="img" aria-label={label} width="112" height="112" viewBox="0 0 112 112">
+          {[...rings].reverse().map((r) => <path d={r.d} fill={r.fill} />)}
+        </svg>
+        <figcaption>One ring per year</figcaption>
+      </figure>
+    )
+  }
+  <dl data-enter="right">
+    {
+      stats.map((s) => (
+        <div>
+          <dt>{s.label}</dt>
+          <dd>{s.value.toLocaleString('en-US')}</dd>
+        </div>
+      ))
+    }
+  </dl>
+</div>
+
+<style>
+  .summary {
+    display: flex;
+    align-items: center;
+    gap: 16px 24px;
+  }
+
+  .headline {
+    flex: 1 1 auto;
+    display: flex;
+    gap: 0 9px;
+    margin: 0;
+    white-space: nowrap;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .headline span {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .headline svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  figure {
+    flex: none;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  figure path {
+    stroke: var(--ring-line);
+    stroke-width: 0.6;
+  }
+
+  figcaption {
+    font-size: 11px;
+    line-height: 1.3;
+    color: var(--ink-3);
+  }
+
+  dl {
+    flex: 1 1 160px;
+    margin: 0;
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: end;
+    align-items: baseline;
+    gap: 4px 10px;
+  }
+
+  /* Number first, label second, while the markup keeps the label as the term. */
+  dl div {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    align-items: baseline;
+  }
+
+  dt {
+    grid-area: 1 / 2;
+    font-size: 15px;
+    color: var(--ink-2);
+  }
+
+  dd {
+    grid-area: 1 / 1;
+    margin: 0;
+    text-align: right;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 640px) {
+    .summary {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px 20px;
+    }
+
+    .headline {
+      flex: 1 0 100%;
+      justify-content: center;
+      font-size: 28px;
+    }
+
+    .headline svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    dl {
+      flex: 1 0 100%;
+      justify-content: center;
+    }
+  }
+</style>

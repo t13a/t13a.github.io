@@ -1,0 +1,42 @@
+---
+// The shadow is a blurred layer behind the sheet rather than box-shadow, whose tiled
+// rendering can leave hairlines when mobile Firefox zooms.
+---
+
+<div class="card">
+  <article class="sheet">
+    <slot />
+  </article>
+</div>
+
+<style>
+  .card {
+    position: relative;
+    width: 100%;
+    max-width: 760px;
+    margin: auto 0;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    translate: 0 16px;
+    border-radius: 14px;
+    background: rgb(44 52 35 / 0.16);
+    filter: blur(20px);
+  }
+
+  .sheet {
+    position: relative;
+    background: var(--card);
+    border-radius: 14px;
+  }
+
+  @media (max-width: 640px) {
+    .card::before,
+    .sheet {
+      border-radius: 0;
+    }
+  }
+</style>
