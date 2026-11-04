@@ -1,13 +1,10 @@
 ---
-import { CAREER_START_YEAR, GITHUB_LOGIN } from '../config';
-
-// Counted at build time; the monthly rebuild on 1 January moves it on.
-const years = new Date().getFullYear() - CAREER_START_YEAR;
+import { GITHUB_LOGIN } from '../config';
 ---
 
 <footer class="about">
   <p>
-    {years} years of Dev and Ops experience across many companies.<br />
+    I work a step ahead of the implementers, clearing the way and taking on the messy parts.<br />
     Self-hosting and open source at home.
   </p>
   <a href={`https://github.com/${GITHUB_LOGIN}`}>github.com/{GITHUB_LOGIN}</a>

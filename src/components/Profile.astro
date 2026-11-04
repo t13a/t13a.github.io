@@ -1,6 +1,10 @@
 ---
 import { Image } from 'astro:assets';
 import avatar from '../assets/avatar.png';
+import { CAREER_START_YEAR } from '../config';
+
+// Counted at build time; the monthly rebuild on 1 January moves it on.
+const years = new Date().getFullYear() - CAREER_START_YEAR;
 ---
 
 <header class="profile">
@@ -8,7 +12,7 @@ import avatar from '../assets/avatar.png';
   <div class="who">
     <h1>Tatsuya Kitagawa</h1>
     <p class="role">Senior Software Engineer</p>
-    <p class="where">Tokyo, Japan · CKA · CKS</p>
+    <p class="where">Tokyo, Japan · {years} years in Dev and Ops</p>
   </div>
 </header>
 
