@@ -8,7 +8,6 @@ import Ticker from '../components/Ticker.astro';
 import FeatureSlide from '../components/slides/FeatureSlide.astro';
 import HomelabSlide from '../components/slides/HomelabSlide.astro';
 import ProjectSlide from '../components/slides/ProjectSlide.astro';
-import TokyoSlide from '../components/slides/TokyoSlide.astro';
 import Base from '../layouts/Base.astro';
 import { CAREER_START_YEAR } from '../config';
 import { github } from '../lib/data';
@@ -28,7 +27,6 @@ const latest = recent.find((r) => r.nameWithOwner !== starred?.nameWithOwner);
     <Card>
       <Profile />
       <Ticker>
-        <Slide label="Tokyo, now" requiresScript><TokyoSlide /></Slide>
         <Slide label="What I do: architecture">
           <FeatureSlide eyebrow="What I do" icon="lucide:drafting-compass" title="Architecture">
             Shaping systems before the first line is written: drawing the boundaries, weighing the trade-offs and
