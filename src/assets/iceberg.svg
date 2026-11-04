@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="160" height="128" viewBox="0 0 160 128" fill="none" stroke="#c8321a" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-  <!-- The waterline on either side -->
-  <path d="M4 44q6-3 12 0t12 0h6M126 44h6q6-3 12 0t12 0"/>
-  <!-- The tip above the water, lit like the card, and the ridge down its face -->
-  <path d="M34 44 58 28l8 4 18-26 14 18 8-4 18 24" fill="#fafaf9"/>
-  <path d="M84 6l-4 20 8 18"/>
-  <!-- The bulk below the water, in dashed hidden lines down to the jagged point -->
-  <path d="M34 44 36 66 50 88 62 104 68 118 73 112 78 127 83 115 87 121 94 104 106 88 120 68 126 44" stroke-dasharray="4 3"/>
-</svg>
