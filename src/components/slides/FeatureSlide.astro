@@ -2,7 +2,8 @@
 import { Icon } from 'astro-icon/components';
 
 // One thing worth showing: a small heading, a title behind an icon, a description and an
-// optional `meta` slot for a line of details. With an href the whole slide is a link.
+// optional `meta` slot for a line of details. With an href the whole slide is a link; without
+// one, the details may hold links of their own.
 interface Props {
   eyebrow: string;
   icon: string;
@@ -98,11 +99,13 @@ const meta = await slot('meta');
     color: var(--ink-2);
   }
 
+  /* Reaches 4px into the gutter on the left so a link's padding there is not clipped */
   .meta {
     flex: none;
     display: flex;
     gap: 18px;
-    padding-right: 32px;
+    margin-left: -4px;
+    padding: 0 32px 0 4px;
     overflow: hidden;
     white-space: nowrap;
     font-size: 13px;
@@ -111,11 +114,36 @@ const meta = await slot('meta');
     mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
   }
 
-  .meta :global(span) {
+  .meta > :global(*) {
     flex: none;
     display: inline-flex;
     align-items: center;
     gap: 5px;
+  }
+
+  .meta > :global(a) {
+    min-height: 24px;
+    padding-inline: 4px;
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: var(--rule);
+    text-underline-offset: 3px;
+  }
+
+  .meta > :global(a:hover) {
+    color: var(--ink);
+    text-decoration-color: currentColor;
+  }
+
+  .meta > :global(a:first-child) {
+    margin-left: -4px;
+  }
+
+  /* Inset, since the details clip whatever reaches past them */
+  .meta > :global(a:focus-visible) {
+    outline: 2px solid var(--ink);
+    outline-offset: -2px;
+    border-radius: 3px;
   }
 
   .meta :global(svg) {
