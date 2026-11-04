@@ -48,17 +48,18 @@ import { GITHUB_LOGIN } from '../config';
     outline-offset: 3px;
   }
 
-  /* Stacked on narrow screens, with plenty of room above and below the line */
+  /* Stacked on narrow screens, where the line keeps the same room above and below itself */
   @media (max-width: 640px) {
     .about {
       flex-direction: column;
-      row-gap: 32px;
-      padding-block: 52px 40px;
+      gap: 0;
+      padding-block: 0 40px;
       text-align: center;
     }
 
     p {
       flex: none;
+      padding-block: 64px;
       font-size: 30px;
       transform-origin: center;
     }
