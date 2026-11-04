@@ -4,14 +4,14 @@ import Card from '../components/Card.astro';
 import Profile from '../components/Profile.astro';
 import Slide from '../components/Slide.astro';
 import Ticker from '../components/Ticker.astro';
-import RepoSlide from '../components/slides/RepoSlide.astro';
+import ProjectSlide from '../components/slides/ProjectSlide.astro';
 import TokyoSlide from '../components/slides/TokyoSlide.astro';
 import Base from '../layouts/Base.astro';
-import { CAREER_START_YEAR } from '../config';
+import { CAREER_START_YEAR, GITHUB_LOGIN } from '../config';
 import { github } from '../lib/data';
 
-// Only pinned repositories are featured; counts like contributions and stars are left out.
-const { pinned } = github.featured;
+// Only my own pinned repositories are featured; counts like contributions and stars are left out.
+const projects = github.featured.pinned.filter((r) => r.nameWithOwner.startsWith(`${GITHUB_LOGIN}/`));
 ---
 
 <Base
@@ -23,7 +23,7 @@ const { pinned } = github.featured;
       <Profile />
       <Ticker>
         <Slide label="Tokyo, now" requiresScript><TokyoSlide /></Slide>
-        {pinned.map((repo) => <Slide label="Featured repository" group="pinned"><RepoSlide repo={repo} /></Slide>)}
+        {projects.map((repo) => <Slide label="Featured repository" group="pinned"><ProjectSlide repo={repo} /></Slide>)}
       </Ticker>
       <About />
     </Card>

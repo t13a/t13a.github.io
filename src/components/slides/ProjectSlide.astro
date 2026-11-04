@@ -1,0 +1,26 @@
+---
+import { GITHUB_LOGIN } from '../../config';
+import type { Repo } from '../../lib/github';
+import FeatureSlide from './FeatureSlide.astro';
+
+// One of my own repositories, by what it does rather than its star and fork counts.
+interface Props {
+  repo: Repo;
+}
+
+const { repo } = Astro.props;
+const committed =
+  repo.committedAt &&
+  new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeZone: 'Asia/Tokyo' }).format(new Date(repo.committedAt));
+---
+
+<FeatureSlide
+  eyebrow="Featured repository"
+  icon="octicon:repo-16"
+  iconLabel="Repository"
+  title={repo.nameWithOwner.replace(`${GITHUB_LOGIN}/`, '')}
+  href={repo.url}
+>
+  {repo.description.replaceAll('**', '')}
+  {committed && <span slot="meta">Last commit {committed}</span>}
+</FeatureSlide>

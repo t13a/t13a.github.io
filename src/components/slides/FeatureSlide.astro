@@ -1,0 +1,138 @@
+---
+import { Icon } from 'astro-icon/components';
+
+// One thing worth showing: a small heading, a title behind an icon, a description and an
+// optional `meta` slot for a line of details. With an href the whole slide is a link.
+interface Props {
+  eyebrow: string;
+  icon: string;
+  /** Read out for the icon; leave it out when the icon is only decoration. */
+  iconLabel?: string;
+  title: string;
+  href?: string;
+}
+
+const { eyebrow, icon, iconLabel, title, href } = Astro.props;
+const Tag = href ? 'a' : 'div';
+const description = (await Astro.slots.render('default')).trim();
+const meta = (await Astro.slots.render('meta')).trim();
+
+// Icons are inlined (is:inline) because the ticker removes unpicked slides, which would take
+// shared sprite symbols with them.
+---
+
+<Tag class="feature" href={href} data-enter="left">
+  <div class="body">
+    <p class="eyebrow">{eyebrow}</p>
+    <p class="title">
+      <Icon is:inline name={icon} title={iconLabel} aria-hidden={iconLabel ? undefined : 'true'} /><span>{title}</span>
+    </p>
+    {description && <p class="description" set:html={description} />}
+  </div>
+  {meta && <p class="meta" set:html={meta} />}
+</Tag>
+
+<style>
+  /* The slide fills its strip so every one is laid out the same way. The text on top wraps
+     and fades out at the bottom when it runs long; the details stay on one line at the bottom
+     and fade out on the right. Each fade covers padding, so only overflow reaches it. */
+  .feature {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a.feature:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 6px;
+    border-radius: 4px;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  .body {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-bottom: 16px;
+    overflow: hidden;
+    mask-image: linear-gradient(to bottom, #000 calc(100% - 16px), transparent);
+  }
+
+  .eyebrow {
+    margin-bottom: 6px;
+  }
+
+  .title {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    overflow-wrap: anywhere;
+  }
+
+  .title svg {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+    vertical-align: -0.12em;
+    color: var(--accent);
+  }
+
+  a.feature:hover .title span {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 5px;
+  }
+
+  .description {
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--ink-2);
+  }
+
+  .meta {
+    flex: none;
+    display: flex;
+    gap: 18px;
+    padding-right: 32px;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--ink-3);
+    mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
+  }
+
+  .meta :global(span) {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .meta :global(svg) {
+    width: 14px;
+    height: 14px;
+  }
+
+  @media (max-width: 640px) {
+    .title {
+      font-size: 24px;
+    }
+
+    .title svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+</style>
