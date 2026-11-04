@@ -48,9 +48,12 @@ import { GITHUB_LOGIN } from '../config';
     outline-offset: 3px;
   }
 
+  /* Stacked on narrow screens, with plenty of room above and below the line */
   @media (max-width: 640px) {
     .about {
       flex-direction: column;
+      row-gap: 32px;
+      padding-block: 52px 40px;
       text-align: center;
     }
 
