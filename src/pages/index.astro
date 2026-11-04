@@ -72,8 +72,8 @@ const latest = recent.find((r) => r.nameWithOwner !== starred?.nameWithOwner);
             title="awslabs/git-secrets"
             href="https://github.com/awslabs/git-secrets/pull/67"
           >
-            Found and fixed a bug in the secret scanner from AWS Labs: given several files, it checked only the
-            first, letting credentials in the rest slip into commits.
+            A serious bug let credentials slip past AWS Labs' secret scanner: it checked only the first of several
+            files. Found in my homelab, fixed upstream.
             <span slot="meta"><Icon name="octicon:git-merge-16" aria-hidden="true" />Merged Aug 10, 2018</span>
           </FeatureSlide>
         </Slide>
