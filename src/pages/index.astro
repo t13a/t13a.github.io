@@ -1,9 +1,11 @@
 ---
+import { Icon } from 'astro-icon/components';
 import About from '../components/About.astro';
 import Card from '../components/Card.astro';
 import Profile from '../components/Profile.astro';
 import Slide from '../components/Slide.astro';
 import Ticker from '../components/Ticker.astro';
+import FeatureSlide from '../components/slides/FeatureSlide.astro';
 import ProjectSlide from '../components/slides/ProjectSlide.astro';
 import TokyoSlide from '../components/slides/TokyoSlide.astro';
 import Base from '../layouts/Base.astro';
@@ -23,6 +25,18 @@ const projects = github.featured.pinned.filter((r) => r.nameWithOwner.startsWith
       <Profile />
       <Ticker>
         <Slide label="Tokyo, now" requiresScript><TokyoSlide /></Slide>
+        <Slide label="Open source contribution">
+          <FeatureSlide
+            eyebrow="Open source contribution"
+            icon="octicon:git-pull-request-16"
+            title="awslabs/git-secrets"
+            href="https://github.com/awslabs/git-secrets/pull/67"
+          >
+            Found and fixed a bug in the secret scanner from AWS Labs: given several files, it checked only the
+            first, letting credentials in the rest slip into commits.
+            <span slot="meta"><Icon is:inline name="octicon:git-merge-16" aria-hidden="true" />Merged Aug 10, 2018</span>
+          </FeatureSlide>
+        </Slide>
         {projects.map((repo) => <Slide label="Featured repository" group="pinned"><ProjectSlide repo={repo} /></Slide>)}
       </Ticker>
       <About />
