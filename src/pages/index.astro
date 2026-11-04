@@ -4,20 +4,14 @@ import Card from '../components/Card.astro';
 import Profile from '../components/Profile.astro';
 import Slide from '../components/Slide.astro';
 import Ticker from '../components/Ticker.astro';
-import ContributionsSlide from '../components/slides/ContributionsSlide.astro';
 import RepoSlide from '../components/slides/RepoSlide.astro';
-import SummarySlide from '../components/slides/SummarySlide.astro';
 import TokyoSlide from '../components/slides/TokyoSlide.astro';
 import Base from '../layouts/Base.astro';
 import { CAREER_START_YEAR } from '../config';
 import { github } from '../lib/data';
 
-// Pinned repositories form one pool; popular and recent ones that are not pinned form the other.
-const { pinned, popular, recent } = github.featured;
-const pinnedNames = new Set(pinned.map((r) => r.nameWithOwner));
-const others = [...new Map([...popular, ...recent].map((r) => [r.nameWithOwner, r])).values()].filter(
-  (r) => !pinnedNames.has(r.nameWithOwner),
-);
+// Only pinned repositories are featured; counts like contributions and stars are left out.
+const { pinned } = github.featured;
 ---
 
 <Base
@@ -30,9 +24,6 @@ const others = [...new Map([...popular, ...recent].map((r) => [r.nameWithOwner, 
       <Ticker>
         <Slide label="Tokyo, now" requiresScript><TokyoSlide /></Slide>
         {pinned.map((repo) => <Slide label="Featured repository" group="pinned"><RepoSlide repo={repo} /></Slide>)}
-        {others.map((repo) => <Slide label="Featured repository" group="other"><RepoSlide repo={repo} /></Slide>)}
-        <Slide label="Contributions"><ContributionsSlide /></Slide>
-        <Slide label="Since 2013 on GitHub"><SummarySlide /></Slide>
       </Ticker>
       <About />
     </Card>
