@@ -3,7 +3,7 @@ import { Icon } from 'astro-icon/components';
 
 // One thing worth showing: a small heading, a title behind an icon, a description and an
 // optional `meta` slot for a line of details. With an href the whole slide is a link; without
-// one, the details may hold links of their own.
+// one, the details may hold links of their own. Details with class="tag" are drawn as badges.
 interface Props {
   eyebrow: string;
   icon: string;
@@ -133,6 +133,18 @@ const meta = await slot('meta');
   .meta > :global(a:hover) {
     color: var(--ink);
     text-decoration-color: currentColor;
+  }
+
+  .meta > :global(.tag) {
+    padding: 0 7px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--ink) 7%, transparent);
+    color: var(--ink-2);
+  }
+
+  /* Badges sit closer together than other details */
+  .meta > :global(.tag + .tag) {
+    margin-left: -12px;
   }
 
   .meta > :global(a:first-child) {
