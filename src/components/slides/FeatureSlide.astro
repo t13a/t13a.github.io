@@ -14,8 +14,9 @@ interface Props {
 
 const { eyebrow, icon, iconLabel, title, href } = Astro.props;
 const Tag = href ? 'a' : 'div';
-const description = (await Astro.slots.render('default')).trim();
-const meta = (await Astro.slots.render('meta')).trim();
+const slot = async (name: string) => (Astro.slots.has(name) ? (await Astro.slots.render(name)).trim() : '');
+const description = await slot('default');
+const meta = await slot('meta');
 
 // Icons are inlined (is:inline) because the ticker removes unpicked slides, which would take
 // shared sprite symbols with them.
