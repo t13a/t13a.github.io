@@ -25,6 +25,24 @@ const projects = github.featured.pinned.filter((r) => r.nameWithOwner.startsWith
       <Profile />
       <Ticker>
         <Slide label="Tokyo, now" requiresScript><TokyoSlide /></Slide>
+        <Slide label="What I do: architecture">
+          <FeatureSlide eyebrow="What I do" icon="lucide:drafting-compass" title="Architecture">
+            Shaping systems before the first line is written: drawing the boundaries, weighing the trade-offs and
+            leaving a path the team can follow.
+          </FeatureSlide>
+        </Slide>
+        <Slide label="What I do: platform engineering">
+          <FeatureSlide eyebrow="What I do" icon="lucide:layers" title="Platform engineering">
+            Paving the road for product teams with Kubernetes, CI/CD and infrastructure as code, so they ship
+            without fighting the plumbing.
+            <span slot="meta">Passed CKA and CKS in 2022</span>
+          </FeatureSlide>
+        </Slide>
+        <Slide label="What I do: technical research">
+          <FeatureSlide eyebrow="What I do" icon="lucide:flask-conical" title="Technical research">
+            Settling the unknowns early with prototypes, benchmarks and write-ups that turn into decisions.
+          </FeatureSlide>
+        </Slide>
         <Slide label="Open source contribution">
           <FeatureSlide
             eyebrow="Open source contribution"
