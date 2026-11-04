@@ -4,13 +4,15 @@ import { GITHUB_LOGIN } from '../config';
 ---
 
 <footer class="about">
-  <p>There's a way.</p>
   <a href={`https://github.com/${GITHUB_LOGIN}`}>github.com/{GITHUB_LOGIN}</a>
+  <p>There's a way.</p>
 </footer>
 
 <style>
+  /* The line is a note written after the button; wide screens tuck it into the corner on the left. */
   .about {
     display: flex;
+    flex-direction: row-reverse;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
@@ -48,11 +50,11 @@ import { GITHUB_LOGIN } from '../config';
     outline-offset: 3px;
   }
 
-  /* Stacked on narrow screens with the line under the button, down at the foot of the card like
-     a note in the corner. It keeps the same room above and below itself. */
+  /* Stacked on narrow screens, where the line sits at the foot of the card with the same room
+     above and below itself */
   @media (max-width: 640px) {
     .about {
-      flex-direction: column-reverse;
+      flex-direction: column;
       gap: 0;
       padding-bottom: 0;
       text-align: center;
