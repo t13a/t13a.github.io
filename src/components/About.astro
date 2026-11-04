@@ -48,18 +48,19 @@ import { GITHUB_LOGIN } from '../config';
     outline-offset: 3px;
   }
 
-  /* Stacked on narrow screens, where the line keeps the same room above and below itself */
+  /* Stacked on narrow screens with the line under the button, down at the foot of the card like
+     a note in the corner. It keeps the same room above and below itself. */
   @media (max-width: 640px) {
     .about {
-      flex-direction: column;
+      flex-direction: column-reverse;
       gap: 0;
-      padding-block: 0 40px;
+      padding-block: 48px 0;
       text-align: center;
     }
 
     p {
       flex: none;
-      padding-block: 64px;
+      padding-block: 48px;
       font-size: 30px;
       transform-origin: center;
     }
