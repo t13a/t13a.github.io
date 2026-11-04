@@ -21,34 +21,34 @@ const latest = recent.find((r) => r.nameWithOwner !== starred?.nameWithOwner);
 
 <Base
   title="Tatsuya Kitagawa"
-  description={`Senior software engineer in Tokyo with ${new Date().getFullYear() - CAREER_START_YEAR} years in Dev and Ops: application development, infrastructure and moving projects forward.`}
+  description={`Senior software engineer in Tokyo with ${new Date().getFullYear() - CAREER_START_YEAR} years in Dev and Ops: application development, infrastructure and driving projects.`}
 >
   <div class="page" style="--contour: url(/contour.svg)">
     <Card>
       <Profile />
       <Ticker>
-        <Slide label="What I do: application development">
-          <FeatureSlide eyebrow="What I do" icon="lucide:code-xml" title="Application development">
-            Business systems from requirements to operations, strongest on performance, hard-to-reproduce bugs and
-            tools that speed the team up.
+        <Slide label="Application development: beyond the happy path">
+          <FeatureSlide eyebrow="Application development" icon="lucide:route" title="Beyond the happy path">
+            Performance, reliability, the bug that won't reproduce. I take them on from requirements to operations,
+            and build frameworks that speed the whole team up.
             <span slot="meta" class="tag">Reset-on-reboot disks in 5 days</span>
             <span slot="meta" class="tag">Workflow system in 3 days</span>
             <span slot="meta" class="tag">CLI tool to API server in 2 days</span>
           </FeatureSlide>
         </Slide>
-        <Slide label="What I do: infrastructure">
-          <FeatureSlide eyebrow="What I do" icon="lucide:server" title="Infrastructure">
-            More than 80 servers and their networks, from requirements to build. Automation cut a vendor's week-long
-            setup to six minutes.
+        <Slide label="Infrastructure: from bare metal up">
+          <FeatureSlide eyebrow="Infrastructure" icon="lucide:layers" title="From bare metal up">
+            Servers, networks and Linux, up through containers, Kubernetes and infrastructure as code. I lead the
+            build and leave a team that can run it on its own.
             <a slot="meta" href="https://www.credly.com/users/t13a/badges/credly">
               <Icon name="lucide:award" aria-hidden="true" />Passed CKA and CKS in 2022
             </a>
           </FeatureSlide>
         </Slide>
-        <Slide label="What I do: moving projects forward">
-          <FeatureSlide eyebrow="What I do" icon="lucide:milestone" title="Moving projects forward">
-            Leading teams of up to five as the PM's right hand, with research that turns into decisions and study
-            sessions that grow the team.
+        <Slide label="Driving projects: seeing around corners">
+          <FeatureSlide eyebrow="Driving projects" icon="lucide:binoculars" title="Seeing around corners">
+            I spot trouble early, propose the way out and see it through. Beside the PM, I plan, lead and report,
+            and grow the people around me.
           </FeatureSlide>
         </Slide>
         <Slide label="Track record: “Stay home” in two weeks">
