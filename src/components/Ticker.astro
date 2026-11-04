@@ -3,7 +3,8 @@ import { Icon } from 'astro-icon/components';
 import { CAROUSEL } from '../config';
 
 // Without JavaScript this is a CSS scroll-snap carousel of every slide. The script turns it into
-// an auto-advancing ticker that shows the slides one at a time, in the order they are written.
+// an auto-advancing ticker that shows the slides one at a time, in the order they are written,
+// with a progress bar whose segments jump to their slide.
 ---
 
 <live-ticker style={`--slide-duration: ${CAROUSEL.slideSeconds}s`}>
@@ -12,7 +13,7 @@ import { CAROUSEL } from '../config';
       <slot />
     </ul>
     <div class="controls" hidden>
-      <ol class="progress" aria-hidden="true"></ol>
+      <ol class="progress" aria-label="Slides"></ol>
       <button class="pause" type="button" aria-label="Pause rotation">
         <Icon is:inline name="lucide:pause" aria-hidden="true" class="when-playing" />
         <Icon is:inline name="lucide:play" aria-hidden="true" class="when-paused" />
@@ -139,13 +140,45 @@ import { CAROUSEL } from '../config';
 
   .progress :global(li) {
     flex: 1;
+    min-width: 0;
+  }
+
+  /* Each segment is a button as tall as the pause button, around a thin bar. */
+  .progress :global(button) {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .progress :global(button:focus-visible) {
+    outline: 2px solid var(--ink);
+  }
+
+  .progress :global(.bar) {
+    flex: 1;
     height: 3px;
     border-radius: 2px;
     background: var(--rule);
     overflow: hidden;
+    transition: height 120ms;
   }
 
-  .progress :global(span) {
+  /* The current segment stands out even before it starts filling, as when rotation is paused. */
+  .progress :global(:is(button:hover, [aria-current]) .bar) {
+    background: color-mix(in srgb, var(--ink) 28%, transparent);
+  }
+
+  .progress :global(button:hover .bar) {
+    height: 5px;
+  }
+
+  .progress :global(.fill) {
     display: block;
     height: 100%;
     background: var(--progress);
@@ -153,15 +186,15 @@ import { CAROUSEL } from '../config';
     transform-origin: left;
   }
 
-  .progress :global([data-done] span) {
+  .progress :global([data-done] .fill) {
     transform: none;
   }
 
-  .progress :global([data-current] span) {
+  .progress :global([aria-current] .fill) {
     animation: fill var(--slide-duration) linear forwards;
   }
 
-  live-ticker:is([data-paused], [data-held]) .progress :global(span) {
+  live-ticker:is([data-paused], [data-held]) .progress :global(.fill) {
     animation-play-state: paused;
   }
 
@@ -239,22 +272,34 @@ import { CAROUSEL } from '../config';
 
   class LiveTicker extends HTMLElement {
     #slides: HTMLElement[] = [];
-    #segments: HTMLElement[] = [];
+    #track!: HTMLElement;
+    #segments: HTMLButtonElement[] = [];
     #index = 0;
     #timer = 0;
     #remaining = DURATION;
     #startedAt = 0;
 
     connectedCallback() {
-      this.#slides = [...this.querySelectorAll<HTMLElement>('.track > .slide')];
+      this.#track = this.querySelector<HTMLElement>('.track')!;
+      this.#slides = [...this.#track.querySelectorAll<HTMLElement>(':scope > .slide')];
       this.#slides.forEach((s, i) => {
         s.hidden = false;
         s.setAttribute('aria-label', `${i + 1} of ${this.#slides.length}: ${s.getAttribute('aria-label')}`);
       });
 
+      // One segment per slide: <li><button><span class="bar"><span class="fill">
       const progress = this.querySelector('.progress')!;
-      this.#segments = this.#slides.map(() => progress.appendChild(document.createElement('li')));
-      this.#segments.forEach((li) => li.appendChild(document.createElement('span')));
+      this.#segments = this.#slides.map((s, i) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.setAttribute('aria-label', s.getAttribute('aria-label')!);
+        button.addEventListener('click', () => i !== this.#index && this.#show(i));
+        const bar = button.appendChild(document.createElement('span'));
+        bar.className = 'bar';
+        bar.appendChild(document.createElement('span')).className = 'fill';
+        progress.appendChild(document.createElement('li')).appendChild(button);
+        return button;
+      });
 
       const button = this.querySelector<HTMLButtonElement>('.pause')!;
       button.addEventListener('click', () => {
@@ -287,9 +332,10 @@ import { CAROUSEL } from '../config';
     #show(next: number) {
       this.#index = next % this.#slides.length;
       this.#slides.forEach((s, i) => s.toggleAttribute('data-active', i === this.#index));
-      this.#segments.forEach((li, i) => {
-        li.toggleAttribute('data-done', i < this.#index);
-        li.toggleAttribute('data-current', i === this.#index);
+      this.#segments.forEach((button, i) => {
+        button.toggleAttribute('data-done', i < this.#index);
+        if (i === this.#index) button.setAttribute('aria-current', 'true');
+        else button.removeAttribute('aria-current');
       });
       this.#remaining = DURATION;
       this.#startedAt = 0;
@@ -297,12 +343,15 @@ import { CAROUSEL } from '../config';
     }
 
     // The timer counts down the current slide's remaining time and stops while paused or held;
-    // the progress bar is only its picture, paused by the same attributes in CSS.
+    // the progress bar is only its picture, paused by the same attributes in CSS. While it is
+    // stopped, screen readers announce the slides that visitors pick.
     #sync() {
       if (this.#startedAt) this.#remaining -= performance.now() - this.#startedAt;
       this.#startedAt = 0;
       clearTimeout(this.#timer);
-      if (this.matches('[data-paused], [data-held]')) return;
+      const stopped = this.matches('[data-paused], [data-held]');
+      this.#track.setAttribute('aria-live', stopped ? 'polite' : 'off');
+      if (stopped) return;
       this.#startedAt = performance.now();
       this.#timer = window.setTimeout(() => this.#show(this.#index + 1), Math.max(0, this.#remaining));
     }
