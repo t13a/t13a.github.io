@@ -21,10 +21,10 @@
     content: '';
     position: absolute;
     inset: 0;
-    translate: 0 16px;
+    translate: 0 8px;
     border-radius: 14px;
     background: rgb(44 52 35 / 0.16);
-    filter: blur(20px);
+    filter: blur(10px);
   }
 
   .sheet {
@@ -33,7 +33,12 @@
     border-radius: 14px;
   }
 
+  /* Full width and flush with the top of the screen */
   @media (max-width: 640px) {
+    .card {
+      margin-top: 0;
+    }
+
     .card::before,
     .sheet {
       border-radius: 0;
