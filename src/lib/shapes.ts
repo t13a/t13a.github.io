@@ -1,4 +1,4 @@
-// Build-time SVG geometry: the contour background and the tree-ring chart.
+// Build-time SVG geometry for the contour background.
 
 type Wobble = (angle: number) => number;
 
@@ -27,26 +27,4 @@ export function contourSvg(rgb: string, minor: number, major: number): string {
     paths += `<path d="${loop(1180, 760, 30 + i * 52, wobble, 64, 0.82, 0)}" stroke-width="${heavy ? 1.6 : 1}" stroke-opacity="${heavy ? major : minor}"/>`;
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000"><g fill="none" stroke="rgb(${rgb})">${paths}</g></svg>`;
-}
-
-export type Ring = { d: string; fill: string };
-
-/**
- * One ring per year, innermost first, each ring's area proportional to that year's count.
- * Quiet years still get a thin ring so every year stays visible.
- */
-export function treeRings(counts: number[], size = 112): Ring[] {
-  const total = counts.reduce((a, b) => a + b, 0);
-  const floor = total * 0.04;
-  const outer = size / 2 - 3;
-  const wobble: Wobble = (t) => 0.03 * Math.sin(3 * t + 0.6) + 0.015 * Math.sin(5 * t + 2);
-  let sum = 0;
-  return counts.map((count, i) => {
-    sum += count + floor;
-    const r = outer * Math.sqrt(sum / (total + floor * counts.length));
-    // The pith sits a little off centre, like real wood.
-    const shift = (outer - r) * 0.1;
-    const fill = i === counts.length - 1 ? 'var(--ring-now)' : i % 2 ? 'var(--ring-a)' : 'var(--ring-b)';
-    return { d: loop(size / 2 - shift, size / 2 - shift * 0.6, r, wobble, 48), fill };
-  });
 }
