@@ -1,9 +1,10 @@
 ---
+import '@fontsource/caveat/latin-600.css';
 import { GITHUB_LOGIN } from '../config';
 ---
 
 <footer class="about">
-  <p>I stay a step ahead of the build, taking on the messy parts so the team finds the way clear.</p>
+  <p>I'll take the messy parts.</p>
   <a href={`https://github.com/${GITHUB_LOGIN}`}>github.com/{GITHUB_LOGIN}</a>
 </footer>
 
@@ -17,12 +18,16 @@ import { GITHUB_LOGIN } from '../config';
     padding: 28px var(--gutter);
   }
 
+  /* The closing line, kept short after the slides and scribbled by hand */
   p {
     flex: 1 1 320px;
     margin: 0;
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--ink-2);
+    font-family: 'Caveat', var(--font);
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.1;
+    transform: rotate(-2deg);
+    transform-origin: left;
   }
 
   a {
@@ -51,7 +56,8 @@ import { GITHUB_LOGIN } from '../config';
 
     p {
       flex: none;
-      font-size: 15px;
+      font-size: 30px;
+      transform-origin: center;
     }
   }
 </style>
