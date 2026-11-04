@@ -15,12 +15,8 @@ export const FEATURED = {
   recentDays: 365,
 };
 
-/** What the carousel shows on each page load. */
+/** How the carousel turns. */
 export const CAROUSEL = {
-  /** Random picks from the pinned repositories. */
-  pinnedPicks: 2,
-  /** Random picks from the popular and recent repositories that are not pinned. */
-  otherPicks: 2,
   /** How long each slide stays before the next one. */
   slideSeconds: 7,
 };

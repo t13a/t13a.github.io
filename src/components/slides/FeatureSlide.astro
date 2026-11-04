@@ -17,16 +17,13 @@ const Tag = href ? 'a' : 'div';
 const slot = async (name: string) => (Astro.slots.has(name) ? (await Astro.slots.render(name)).trim() : '');
 const description = await slot('default');
 const meta = await slot('meta');
-
-// Icons are inlined (is:inline) because the ticker removes unpicked slides, which would take
-// shared sprite symbols with them.
 ---
 
 <Tag class="feature" href={href} data-enter="left">
   <div class="body">
     <p class="eyebrow">{eyebrow}</p>
     <p class="title">
-      <Icon is:inline name={icon} title={iconLabel} aria-hidden={iconLabel ? undefined : 'true'} /><span>{title}</span>
+      <Icon name={icon} title={iconLabel} aria-hidden={iconLabel ? undefined : 'true'} /><span>{title}</span>
     </p>
     {description && <p class="description" set:html={description} />}
   </div>

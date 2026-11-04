@@ -9,11 +9,14 @@ import FeatureSlide from '../components/slides/FeatureSlide.astro';
 import ProjectSlide from '../components/slides/ProjectSlide.astro';
 import TokyoSlide from '../components/slides/TokyoSlide.astro';
 import Base from '../layouts/Base.astro';
-import { CAREER_START_YEAR, GITHUB_LOGIN } from '../config';
+import { CAREER_START_YEAR } from '../config';
 import { github } from '../lib/data';
 
-// Only my own pinned repositories are featured; counts like contributions and stars are left out.
-const projects = github.featured.pinned.filter((r) => r.nameWithOwner.startsWith(`${GITHUB_LOGIN}/`));
+// Two of my own repositories: the most starred, and the latest pushed for a sign of what I am on
+// now. The latest skips the most starred when they are the same one.
+const { popular, recent } = github.featured;
+const starred = popular.toSorted((a, b) => b.stars - a.stars)[0];
+const latest = recent.find((r) => r.nameWithOwner !== starred?.nameWithOwner);
 ---
 
 <Base
@@ -52,10 +55,23 @@ const projects = github.featured.pinned.filter((r) => r.nameWithOwner.startsWith
           >
             Found and fixed a bug in the secret scanner from AWS Labs: given several files, it checked only the
             first, letting credentials in the rest slip into commits.
-            <span slot="meta"><Icon is:inline name="octicon:git-merge-16" aria-hidden="true" />Merged Aug 10, 2018</span>
+            <span slot="meta"><Icon name="octicon:git-merge-16" aria-hidden="true" />Merged Aug 10, 2018</span>
           </FeatureSlide>
         </Slide>
-        {projects.map((repo) => <Slide label="Featured repository" group="pinned"><ProjectSlide repo={repo} /></Slide>)}
+        {
+          starred && (
+            <Slide label="Most starred repository">
+              <ProjectSlide eyebrow="Most starred repository" repo={starred} />
+            </Slide>
+          )
+        }
+        {
+          latest && (
+            <Slide label="Latest push">
+              <ProjectSlide eyebrow="Latest push" repo={latest} />
+            </Slide>
+          )
+        }
       </Ticker>
       <About />
     </Card>

@@ -5,17 +5,19 @@ import FeatureSlide from './FeatureSlide.astro';
 
 // One of my own repositories, by what it does rather than its star and fork counts.
 interface Props {
+  /** Why this repository is shown, like "Most starred repository". */
+  eyebrow: string;
   repo: Repo;
 }
 
-const { repo } = Astro.props;
+const { eyebrow, repo } = Astro.props;
 const committed =
   repo.committedAt &&
   new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeZone: 'Asia/Tokyo' }).format(new Date(repo.committedAt));
 ---
 
 <FeatureSlide
-  eyebrow="Featured repository"
+  eyebrow={eyebrow}
   icon="octicon:repo-16"
   iconLabel="Repository"
   title={repo.nameWithOwner.replace(`${GITHUB_LOGIN}/`, '')}

@@ -3,7 +3,7 @@ import { Icon } from 'astro-icon/components';
 import { CAROUSEL } from '../config';
 
 // Without JavaScript this is a CSS scroll-snap carousel of every slide. The script turns it into
-// an auto-advancing ticker: random repository picks, shuffled order, one slide at a time.
+// an auto-advancing ticker that shows the slides one at a time, in the order they are written.
 ---
 
 <live-ticker style={`--slide-duration: ${CAROUSEL.slideSeconds}s`}>
@@ -235,15 +235,6 @@ import { CAROUSEL } from '../config';
 <script>
   import { CAROUSEL } from '../config';
 
-  function shuffle<T>(items: T[]): T[] {
-    const a = [...items];
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  }
-
   const DURATION = CAROUSEL.slideSeconds * 1000;
 
   class LiveTicker extends HTMLElement {
@@ -255,21 +246,10 @@ import { CAROUSEL } from '../config';
     #startedAt = 0;
 
     connectedCallback() {
-      const track = this.querySelector<HTMLElement>('.track')!;
-      const all = [...track.querySelectorAll<HTMLElement>(':scope > .slide')];
-
-      // Keep a random few repositories from each group, then shuffle everything.
-      const keep = new Set([
-        ...shuffle(all.filter((s) => s.dataset.group === 'pinned')).slice(0, CAROUSEL.pinnedPicks),
-        ...shuffle(all.filter((s) => s.dataset.group === 'other')).slice(0, CAROUSEL.otherPicks),
-        ...all.filter((s) => !s.dataset.group),
-      ]);
-      for (const s of all) if (!keep.has(s)) s.remove();
-      this.#slides = shuffle([...keep]);
+      this.#slides = [...this.querySelectorAll<HTMLElement>('.track > .slide')];
       this.#slides.forEach((s, i) => {
         s.hidden = false;
         s.setAttribute('aria-label', `${i + 1} of ${this.#slides.length}: ${s.getAttribute('aria-label')}`);
-        track.append(s);
       });
 
       const progress = this.querySelector('.progress')!;
