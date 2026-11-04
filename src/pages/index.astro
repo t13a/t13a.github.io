@@ -6,6 +6,7 @@ import Profile from '../components/Profile.astro';
 import Slide from '../components/Slide.astro';
 import Ticker from '../components/Ticker.astro';
 import FeatureSlide from '../components/slides/FeatureSlide.astro';
+import HomelabSlide from '../components/slides/HomelabSlide.astro';
 import ProjectSlide from '../components/slides/ProjectSlide.astro';
 import TokyoSlide from '../components/slides/TokyoSlide.astro';
 import Base from '../layouts/Base.astro';
@@ -82,6 +83,7 @@ const latest = recent.find((r) => r.nameWithOwner !== starred?.nameWithOwner);
             </Slide>
           )
         }
+        <Slide label="Homelab and open source"><HomelabSlide /></Slide>
       </Ticker>
       <About />
     </Card>
