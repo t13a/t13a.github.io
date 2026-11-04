@@ -21,30 +21,34 @@ const latest = recent.find((r) => r.nameWithOwner !== starred?.nameWithOwner);
 
 <Base
   title="Tatsuya Kitagawa"
-  description={`Senior software engineer in Tokyo with ${new Date().getFullYear() - CAREER_START_YEAR} years in Dev and Ops: architecture, platform engineering and technical research.`}
+  description={`Senior software engineer in Tokyo with ${new Date().getFullYear() - CAREER_START_YEAR} years in Dev and Ops: application development, infrastructure and moving projects forward.`}
 >
   <div class="page" style="--contour: url(/contour.svg)">
     <Card>
       <Profile />
       <Ticker>
-        <Slide label="What I do: architecture">
-          <FeatureSlide eyebrow="What I do" icon="lucide:drafting-compass" title="Architecture">
-            Shaping systems before the first line is written: drawing the boundaries, weighing the trade-offs and
-            leaving a path the team can follow.
+        <Slide label="What I do: application development">
+          <FeatureSlide eyebrow="What I do" icon="lucide:code-xml" title="Application development">
+            Business systems from requirements to operations, strongest on performance, hard-to-reproduce bugs and
+            tools that speed the team up.
+            <span slot="meta" class="tag">Reset-on-reboot disks in 5 days</span>
+            <span slot="meta" class="tag">Workflow system in 3 days</span>
+            <span slot="meta" class="tag">CLI tool to API server in 2 days</span>
           </FeatureSlide>
         </Slide>
-        <Slide label="What I do: platform engineering">
-          <FeatureSlide eyebrow="What I do" icon="lucide:layers" title="Platform engineering">
-            Paving the road for product teams with Kubernetes, CI/CD and infrastructure as code, so they ship
-            without fighting the plumbing.
+        <Slide label="What I do: infrastructure">
+          <FeatureSlide eyebrow="What I do" icon="lucide:server" title="Infrastructure">
+            More than 80 servers and their networks, from requirements to build. Automation cut a vendor's week-long
+            setup to six minutes.
             <a slot="meta" href="https://www.credly.com/users/t13a/badges/credly">
               <Icon name="lucide:award" aria-hidden="true" />Passed CKA and CKS in 2022
             </a>
           </FeatureSlide>
         </Slide>
-        <Slide label="What I do: technical research">
-          <FeatureSlide eyebrow="What I do" icon="lucide:flask-conical" title="Technical research">
-            Settling the unknowns early with prototypes, benchmarks and write-ups that turn into decisions.
+        <Slide label="What I do: moving projects forward">
+          <FeatureSlide eyebrow="What I do" icon="lucide:milestone" title="Moving projects forward">
+            Leading teams of up to five as the PM's right hand, with research that turns into decisions and study
+            sessions that grow the team.
           </FeatureSlide>
         </Slide>
         <Slide label="Track record: “Stay home” in a week">
