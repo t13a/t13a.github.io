@@ -1,7 +1,8 @@
 ---
 // The closing slide: engineering as a hobby, drawn as an iceberg. It is widest at the waterline
-// and tapers both ways, longer below: the homelab is the bulk under the water, in dashed hidden
-// lines, and the tip that surfaces is what goes to GitHub.
+// and tapers both ways, longer below: the homelab is the bulk under the water, a rugged outline
+// in dashed hidden lines with the usual jagged point, and the tip that surfaces is what goes to
+// GitHub.
 ---
 
 <div class="homelab">
@@ -12,7 +13,10 @@
     <path d="M4 44q6-3 12 0t12 0h6M126 44h6q6-3 12 0t12 0" />
     <path class="tip" d="M34 44 58 28l8 4 18-26 14 18 8-4 18 24" />
     <path d="M84 6l-4 20 8 18" />
-    <path class="under" d="M34 44 52 84l28 40 24-34 22-46M88 44 74 88l6 36M74 88l30 2" />
+    <path
+      class="under"
+      d="M34 44 39 54 36 60 42 72 40 79 50 91 47 97 60 107 63 117 71 112 77 126 84 113 90 120 95 106 106 98 104 91 114 80 112 73 121 62 118 55 126 44"
+    />
   </svg>
 </div>
 
@@ -77,7 +81,7 @@
   }
 
   .under {
-    stroke-dasharray: 5 4;
+    stroke-dasharray: 3 3;
   }
 
   @media (max-width: 640px) {
