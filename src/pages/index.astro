@@ -41,7 +41,7 @@ const others = [...new Map([...popular, ...recent].map((r) => [r.nameWithOwner, 
 </Base>
 
 <style>
-  /* Contour lines over a dark heartwood around their centre and a light top-left corner */
+  /* Contour lines over a darker centre and a faintly lit top-left corner */
   .page {
     box-sizing: border-box;
     min-height: 100vh;
@@ -53,8 +53,8 @@ const others = [...new Map([...popular, ...recent].map((r) => [r.nameWithOwner, 
     gap: 48px;
     background:
       var(--contour) center / cover no-repeat,
-      radial-gradient(ellipse 75% 85% at 80% 76%, rgb(44 52 35 / 0.12), transparent 75%),
-      radial-gradient(ellipse 95% 95% at 0% 0%, rgb(255 255 255 / 0.6), transparent 72%),
+      radial-gradient(ellipse 75% 85% at 80% 76%, rgb(0 0 0 / 0.35), transparent 75%),
+      radial-gradient(ellipse 95% 95% at 0% 0%, rgb(255 255 255 / 0.07), transparent 72%),
       var(--ground);
   }
 

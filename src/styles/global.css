@@ -2,26 +2,29 @@
   color-scheme: light;
   --font: 'Hanken Grotesk Variable', system-ui, sans-serif;
 
-  /* Moss ground, sage card */
-  --ground: #d2d8cb;
-  --card: #fbfcfb;
-  --strip: #eef2ef;
-  --ink: #24302b;
-  --ink-2: #3f4b46;
-  --ink-3: #4e5b55;
-  --rule: rgb(36 48 43 / 0.16);
-  --caption: #31362b;
+  /* Graphite ground, off-white card, vermilion as the only colour */
+  --ground: #222528;
+  --card: #fafaf9;
+  --strip: #f0f0ef;
+  --ink: #16181b;
+  --ink-2: #3c4147;
+  --ink-3: #545a61;
+  --rule: rgb(22 24 27 / 0.14);
+  --caption: rgb(255 255 255 / 0.7);
+  /* --accent is dark enough for small text on the card; --accent-bright is for marks only. */
+  --accent: #c8321a;
+  --accent-bright: #e0401f;
 
-  --grass-0: rgb(36 48 43 / 0.08);
-  --grass-1: #c6d4b9;
-  --grass-2: #9db48c;
-  --grass-3: #728e62;
-  --grass-4: #4a653f;
+  --grass-0: rgb(22 24 27 / 0.07);
+  --grass-1: #d4d6d8;
+  --grass-2: #a6abb0;
+  --grass-3: #6f767d;
+  --grass-4: #3a4046;
 
-  --ring-a: #e7ebe2;
-  --ring-b: #d8dfd0;
-  --ring-now: #cfe6d1;
-  --ring-line: rgb(44 52 35 / 0.32);
+  --ring-a: #ececeb;
+  --ring-b: #dcdddc;
+  --ring-now: #f6d5cd;
+  --ring-line: rgb(22 24 27 / 0.32);
 
   --gutter: 48px;
   --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -49,5 +52,5 @@ body {
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: var(--accent);
 }

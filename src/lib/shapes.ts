@@ -17,14 +17,14 @@ function loop(cx: number, cy: number, radius: number, wobble: Wobble, points = 6
   return `${d}Z`;
 }
 
-/** Concentric contour lines around the lower right, every fifth one heavier. */
-export function contourSvg(rgb: string): string {
+/** Concentric contour lines around the lower right, every fifth one heavier and stronger. */
+export function contourSvg(rgb: string, minor: number, major: number): string {
   let paths = '';
   for (let i = 1; i <= 30; i++) {
     const wobble: Wobble = (t) =>
       0.1 * Math.sin(3 * t + 0.8 + i * 0.12) + 0.06 * Math.sin(5 * t + 2.1 - i * 0.09) + 0.03 * Math.sin(9 * t + i * 0.2);
-    const major = i % 5 === 0;
-    paths += `<path d="${loop(1180, 760, 30 + i * 52, wobble, 64, 0.82, 0)}" stroke-width="${major ? 1.6 : 1}" stroke-opacity="${major ? 0.16 : 0.094}"/>`;
+    const heavy = i % 5 === 0;
+    paths += `<path d="${loop(1180, 760, 30 + i * 52, wobble, 64, 0.82, 0)}" stroke-width="${heavy ? 1.6 : 1}" stroke-opacity="${heavy ? major : minor}"/>`;
   }
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000"><g fill="none" stroke="rgb(${rgb})">${paths}</g></svg>`;
 }
