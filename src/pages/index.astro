@@ -7,16 +7,8 @@ import Slide from '../components/Slide.astro';
 import Ticker from '../components/Ticker.astro';
 import FeatureSlide from '../components/slides/FeatureSlide.astro';
 import HomelabSlide from '../components/slides/HomelabSlide.astro';
-import ProjectSlide from '../components/slides/ProjectSlide.astro';
 import Base from '../layouts/Base.astro';
 import { CAREER_START_YEAR } from '../config';
-import { github } from '../lib/data';
-
-// Two of my own repositories: the most starred, and the latest pushed for a sign of what I am on
-// now. The latest skips the most starred when they are the same one.
-const { popular, recent } = github.featured;
-const starred = popular.toSorted((a, b) => b.stars - a.stars)[0];
-const latest = recent.find((r) => r.nameWithOwner !== starred?.nameWithOwner);
 ---
 
 <Base
@@ -57,20 +49,24 @@ const latest = recent.find((r) => r.nameWithOwner !== starred?.nameWithOwner);
             <span slot="meta" class="tag">AWS Session Manager</span>
           </FeatureSlide>
         </Slide>
-        {
-          starred && (
-            <Slide label="Most starred repository">
-              <ProjectSlide eyebrow="Most starred repository" repo={starred} />
-            </Slide>
-          )
-        }
-        {
-          latest && (
-            <Slide label="Latest push">
-              <ProjectSlide eyebrow="Latest push" repo={latest} />
-            </Slide>
-          )
-        }
+        <Slide label="Technical research: bit rot, measured">
+          <FeatureSlide eyebrow="Technical research" icon="lucide:hard-drive" title="Bit rot, measured">
+            RAID can't fix data that silently rots on a healthy disk. I found no speed comparison of the Linux stacks
+            that can, so I benchmarked 19 setups with fio and published the report.
+            <a slot="meta" href="https://github.com/t13a/dm-integrity-benchmarks">
+              <Icon name="octicon:repo-16" aria-hidden="true" />t13a/dm-integrity-benchmarks
+            </a>
+          </FeatureSlide>
+        </Slide>
+        <Slide label="Latest project: let the AI rehearse first">
+          <FeatureSlide eyebrow="Latest project" icon="lucide:bot" title="Let the AI rehearse first">
+            An AI agent organizes piles of large files by moving only symlinks; the real ones follow once I approve
+            its plan in git. Linux and git already had every piece, so the code stays small.
+            <a slot="meta" href="https://github.com/t13a/rehearse">
+              <Icon name="octicon:repo-16" aria-hidden="true" />t13a/rehearse
+            </a>
+          </FeatureSlide>
+        </Slide>
         <Slide label="Homelab and open source"><HomelabSlide /></Slide>
       </Ticker>
       <About />
