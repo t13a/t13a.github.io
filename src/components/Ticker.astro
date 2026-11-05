@@ -30,6 +30,13 @@ import { CAROUSEL } from '../config';
     --progress: var(--accent-bright);
   }
 
+  /* Below 792px the card is narrower than its full 760px, so descriptions may wrap to a third line. */
+  @media (max-width: 791px) {
+    live-ticker {
+      --slide-body: 163px;
+    }
+  }
+
   @media (max-width: 640px) {
     live-ticker {
       --slide-body: 186px;
