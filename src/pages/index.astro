@@ -27,42 +27,13 @@ const latest = recent.find((r) => r.nameWithOwner !== starred?.nameWithOwner);
     <Card>
       <Profile />
       <Ticker>
-        <Slide label="Application development: beyond the happy path">
-          <FeatureSlide eyebrow="Application development" icon="lucide:route" title="Beyond the happy path">
-            Performance, reliability, the bug that won't reproduce. I take them on from requirements to operations,
-            and build frameworks that speed the whole team up.
-            <span slot="meta" class="tag">TypeScript</span>
-            <span slot="meta" class="tag">Python</span>
-            <span slot="meta" class="tag">Java</span>
-            <span slot="meta" class="tag">DDD</span>
-          </FeatureSlide>
-        </Slide>
-        <Slide label="Infrastructure: ground to build on">
-          <FeatureSlide eyebrow="Infrastructure" icon="lucide:layers" title="Ground to build on">
-            Networks, servers and Linux, up through containers, Kubernetes and infrastructure as code. I lead the
-            build and leave nothing in the team's way.
+        <Slide label="Applications and infrastructure: beyond the happy path">
+          <FeatureSlide eyebrow="Applications and infrastructure" icon="lucide:route" title="Beyond the happy path">
+            Performance, security, the bug that won't reproduce. Apps or infrastructure, I take them on from
+            requirements to operations, and build frameworks that speed the whole team up.
             <a slot="meta" href="https://www.credly.com/users/t13a/badges/credly">
               <Icon name="lucide:award" aria-hidden="true" />Passed CKA and CKS in 2022
             </a>
-          </FeatureSlide>
-        </Slide>
-        <Slide label="Driving projects: seeing around corners">
-          <FeatureSlide eyebrow="Driving projects" icon="lucide:binoculars" title="Seeing around corners">
-            Risk or opportunity, I spot it early, propose the way forward and see it through. Beside the
-            decision-makers, I plan, lead and report, and grow the people around me.
-            <span slot="meta" class="tag">Technical research</span>
-            <span slot="meta" class="tag">PoC</span>
-            <span slot="meta" class="tag">Postmortems</span>
-            <span slot="meta" class="tag">Study sessions</span>
-          </FeatureSlide>
-        </Slide>
-        <Slide label="Track record: “Stay home” in two weeks">
-          <FeatureSlide eyebrow="Track record" icon="lucide:virus-off" title="“Stay home” in two weeks">
-            When COVID-19 hit, a PoC on a closed network kept us on site. I proposed a secure tunnel spanning the
-            existing networks and got everyone working from home.
-            <span slot="meta" class="tag">Apache Guacamole</span>
-            <span slot="meta" class="tag">SSH reverse port forwarding</span>
-            <span slot="meta" class="tag">AWS Session Manager</span>
           </FeatureSlide>
         </Slide>
         <Slide label="Open source contribution">
@@ -75,6 +46,15 @@ const latest = recent.find((r) => r.nameWithOwner !== starred?.nameWithOwner);
             A serious bug let credentials slip past AWS Labs' secret scanner: it checked only the first of several
             files. Found in my homelab, fixed upstream.
             <span slot="meta"><Icon name="octicon:git-merge-16" aria-hidden="true" />Merged Aug 10, 2018</span>
+          </FeatureSlide>
+        </Slide>
+        <Slide label="Track record: “Stay home” in two weeks">
+          <FeatureSlide eyebrow="Track record" icon="lucide:virus-off" title="“Stay home” in two weeks">
+            When COVID-19 hit, a PoC on a closed network kept us on site. I proposed a secure tunnel spanning the
+            existing networks and got everyone working from home.
+            <span slot="meta" class="tag">Apache Guacamole</span>
+            <span slot="meta" class="tag">SSH reverse port forwarding</span>
+            <span slot="meta" class="tag">AWS Session Manager</span>
           </FeatureSlide>
         </Slide>
         {
