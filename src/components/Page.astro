@@ -1,0 +1,41 @@
+---
+// What every page stands on: the contour ground around the card and the copyright under it.
+---
+
+<div class="page" style="--contour: url(/contour.svg)">
+  <slot />
+  <p class="copyright">© {new Date().getFullYear()} Tatsuya Kitagawa</p>
+</div>
+
+<style>
+  /* Contour lines over a darker centre and a faintly lit top-left corner */
+  .page {
+    box-sizing: border-box;
+    min-height: 100vh;
+    min-height: 100lvh;
+    padding: 48px 16px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+    background:
+      var(--contour) center / cover no-repeat,
+      radial-gradient(ellipse 75% 85% at 80% 76%, rgb(0 0 0 / 0.35), transparent 75%),
+      radial-gradient(ellipse 95% 95% at 0% 0%, rgb(255 255 255 / 0.07), transparent 72%),
+      var(--ground);
+  }
+
+  @media (max-width: 640px) {
+    .page {
+      padding: 0 0 24px;
+      gap: 24px;
+    }
+  }
+
+  .copyright {
+    margin: 0;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    color: var(--caption);
+  }
+</style>
