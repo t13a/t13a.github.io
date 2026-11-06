@@ -26,14 +26,14 @@ import { CAROUSEL } from '../config';
   /* --slide-body is the room every slide gets, so the ticker keeps one height as it turns. */
   live-ticker {
     display: block;
-    --slide-body: 142px;
+    --slide-body: 148px;
     --progress: var(--accent-bright);
   }
 
   /* Below 792px the card is narrower than its full 760px, so descriptions may wrap to a third line. */
   @media (max-width: 791px) {
     live-ticker {
-      --slide-body: 163px;
+      --slide-body: 169px;
     }
   }
 

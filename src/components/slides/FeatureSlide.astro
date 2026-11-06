@@ -99,11 +99,14 @@ const meta = await slot('meta');
     color: var(--ink-2);
   }
 
-  /* Reaches 4px into the gutter on the left so a link's padding there is not clipped */
+  /* Reaches 4px into the gutter on the left so a link's padding there is not clipped. As tall as
+     a link whatever it holds, so the text above has the same room on every slide. */
   .meta {
     flex: none;
     display: flex;
+    align-items: center;
     gap: 18px;
+    min-height: 24px;
     margin-left: -4px;
     padding: 0 32px 0 4px;
     overflow: hidden;
