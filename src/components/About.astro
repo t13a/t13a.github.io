@@ -1,18 +1,10 @@
 ---
 import '@fontsource/caveat/latin-600.css';
 import { GITHUB_LOGIN } from '../config';
-
-interface Props {
-  /** Where the button leads; GitHub unless the page has a better way on. */
-  href?: string;
-  label?: string;
-}
-
-const { href = `https://github.com/${GITHUB_LOGIN}`, label = `github.com/${GITHUB_LOGIN}` } = Astro.props;
 ---
 
 <footer class="about">
-  <a href={href}>{label}</a>
+  <a href={`https://github.com/${GITHUB_LOGIN}`}>github.com/{GITHUB_LOGIN}</a>
   <p>There's a way.</p>
 </footer>
 

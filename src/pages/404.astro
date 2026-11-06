@@ -1,36 +1,67 @@
 ---
-import About from '../components/About.astro';
-import Card from '../components/Card.astro';
 import Page from '../components/Page.astro';
-import Profile from '../components/Profile.astro';
-import FeatureSlide from '../components/slides/FeatureSlide.astro';
 import Base from '../layouts/Base.astro';
 
-// GitHub Pages serves this for any address it has no page for. It keeps the home page's card,
-// with one slide where the ticker was and the button leading back home.
+// GitHub Pages serves this for any address it has no page for: a few words on the bare ground,
+// so it is not mistaken for the home page.
 ---
 
 <Base title="Page not found · Tatsuya Kitagawa" description="No page lives at this address.">
   <Page>
-    <Card>
-      <Profile />
-      <div class="lost">
-        <FeatureSlide eyebrow="Page not found" icon="lucide:compass" title="Off the map">
-          No page lives at this address. The link may be out of date, or the address mistyped.
-        </FeatureSlide>
-      </div>
-      <About href="/" label="Back to t13a.com" />
-    </Card>
+    <main class="lost">
+      <p class="code">404</p>
+      <h1>Page not found</h1>
+      <a href="/">Back to home</a>
+    </main>
   </Page>
 </Base>
 
 <style>
-  /* The strip the ticker sits on, holding the one slide */
   .lost {
+    margin: auto 0;
+    padding: 0 16px;
     display: flex;
     flex-direction: column;
-    min-height: 142px;
-    padding: 24px var(--gutter);
-    background: var(--strip);
+    align-items: center;
+    text-align: center;
+    color: var(--card);
+  }
+
+  p,
+  h1 {
+    margin: 0;
+  }
+
+  .code {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--caption);
+  }
+
+  h1 {
+    margin-top: 8px;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  a {
+    margin-top: 24px;
+    color: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration-color: rgb(255 255 255 / 0.4);
+    text-underline-offset: 4px;
+  }
+
+  a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  a:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+    border-radius: 2px;
   }
 </style>
