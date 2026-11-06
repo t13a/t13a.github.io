@@ -41,8 +41,9 @@
   <text x="156" y="224" font-size="96" font-weight="700" letter-spacing="-1.92" fill="#16181b">Tatsuya Kitagawa</text>
   <text x="156" y="290" font-size="40" font-weight="500" fill="#3c4147">Senior Software Engineer</text>
   <text x="156" y="342" font-size="34" fill="#545a61">Tokyo, Japan</text>
-  <g transform="translate(156 462) scale(1.25)" color="#545a61">
+  <!-- The address sits in the lower right corner; the globe keeps 14 px left of the 125 px wide text. -->
+  <g transform="translate(874.5 462) scale(1.25)" color="#545a61">
     <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20a14.5 14.5 0 0 0 0-20M2 12h20"/></g>
   </g>
-  <text x="200" y="488" font-size="30" font-weight="500" fill="#545a61">t13a.com</text>
+  <text x="1044" y="488" font-size="30" font-weight="500" text-anchor="end" fill="#545a61">t13a.com</text>
 </svg>
