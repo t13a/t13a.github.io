@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- The T of the name in Hanken Grotesk Bold, black on the card's white with nothing see-through.
+       Its top, foot and crossbar sit on whole pixels at 16 px. -->
+  <rect width="64" height="64" fill="#fafaf9" />
+  <path d="M27.52 56V16H12.65V8h38.7v8H36.55v40z" fill="#16181b" />
+</svg>
