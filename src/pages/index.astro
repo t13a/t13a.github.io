@@ -29,16 +29,14 @@ import { CAREER_START_YEAR } from '../config';
             </a>
           </FeatureSlide>
         </Slide>
-        <Slide label="Open source contribution">
-          <FeatureSlide
-            eyebrow="Open source contribution"
-            icon="octicon:git-pull-request-16"
-            title="awslabs/git-secrets"
-            href="https://github.com/awslabs/git-secrets/pull/67"
-          >
+        <Slide label="Open source contribution: one fix for all">
+          <FeatureSlide eyebrow="Open source contribution" icon="lucide:shield-check" title="One fix for all">
             A serious bug let credentials slip past AWS Labs' secret scanner: it checked only the first of several
             files. Found in my homelab, fixed upstream.
-            <span slot="meta"><Icon name="octicon:git-merge-16" aria-hidden="true" />Merged Aug 10, 2018</span>
+            <a slot="meta" href="https://github.com/awslabs/git-secrets/pull/67">
+              <Icon name="octicon:git-pull-request-16" aria-hidden="true" />awslabs/git-secrets
+            </a>
+            <span slot="meta">Merged Aug 10, 2018</span>
           </FeatureSlide>
         </Slide>
         <Slide label="Business continuity: “Stay home” in two weeks">
