@@ -1,0 +1,36 @@
+---
+import About from '../components/About.astro';
+import Card from '../components/Card.astro';
+import Page from '../components/Page.astro';
+import Profile from '../components/Profile.astro';
+import FeatureSlide from '../components/slides/FeatureSlide.astro';
+import Base from '../layouts/Base.astro';
+
+// GitHub Pages serves this for any address it has no page for. It keeps the home page's card,
+// with one slide where the ticker was and the button leading back home.
+---
+
+<Base title="Page not found · Tatsuya Kitagawa" description="No page lives at this address.">
+  <Page>
+    <Card>
+      <Profile />
+      <div class="lost">
+        <FeatureSlide eyebrow="Page not found" icon="lucide:compass" title="Off the map">
+          No page lives at this address. The link may be out of date, or the address mistyped.
+        </FeatureSlide>
+      </div>
+      <About href="/" label="Back to t13a.com" />
+    </Card>
+  </Page>
+</Base>
+
+<style>
+  /* The strip the ticker sits on, holding the one slide */
+  .lost {
+    display: flex;
+    flex-direction: column;
+    min-height: 142px;
+    padding: 24px var(--gutter);
+    background: var(--strip);
+  }
+</style>
