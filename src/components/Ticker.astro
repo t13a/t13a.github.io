@@ -41,9 +41,11 @@ import { CAROUSEL } from '../config';
   }
 
   /* Each slide carries the strip, so slides can cover one another like cards, and a shadow that
-     shows while the script lifts them. */
+     shows while the script lifts them. The shadow lies between the strip and a copy of it on top,
+     so it can move and grow without ever falling on the slide itself. */
   .track > :global(.slide) {
     position: relative;
+    isolation: isolate;
     flex: 0 0 100%;
     box-sizing: border-box;
     min-width: 0;
@@ -55,13 +57,23 @@ import { CAROUSEL } from '../config';
     scroll-snap-align: start;
   }
 
+  .track > :global(.slide)::before,
   .track > :global(.slide)::after {
     content: '';
     position: absolute;
     inset: 0;
-    box-shadow: 0 10px 28px rgb(22 24 27 / 0.22);
-    opacity: 0;
     pointer-events: none;
+  }
+
+  .track > :global(.slide)::before {
+    z-index: -1;
+    background: var(--strip);
+  }
+
+  .track > :global(.slide)::after {
+    z-index: -2;
+    box-shadow: 0 0 24px rgb(22 24 27 / 0.3);
+    opacity: 0;
   }
 
   .track > :global(.slide[hidden]) {
@@ -261,6 +273,10 @@ import { CAROUSEL } from '../config';
       border-top: 1px solid var(--rule);
     }
 
+    /* The layers for lifting slides are only for the screen. Printed without backgrounds, the
+       strip's copy would come out white and hide the rule. */
+    .track > :global(.slide)::before,
+    .track > :global(.slide)::after,
     .controls {
       display: none;
     }
@@ -373,8 +389,6 @@ import { CAROUSEL } from '../config';
     #expand(index: number) {
       const slide = this.#slides[index];
       const top = slide.getBoundingClientRect().top;
-      const around = [...this.parentElement!.children].filter((el) => el !== this && el.getClientRects().length);
-      const was = around.map((el) => el.getBoundingClientRect().top);
       clearTimeout(this.#timer);
       this.toggleAttribute('data-expanded', true);
       this.#slides.forEach((s) => s.toggleAttribute('data-active', s === slide));
@@ -385,22 +399,28 @@ import { CAROUSEL } from '../config';
       slide.focus({ preventScroll: true });
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-      // The page takes its final height and scroll at once, and then the stack falls apart. Each
-      // slide is lifted and spreads out from under the picked one, the nearest on top, while what
-      // sits around the ticker, like the profile, moves out of the way from where it was. The
-      // picked one keeps still, unless no scrolling could hold it, as at the top of a centred card.
-      // Only translate and opacity are animated, which the compositor runs in step with one another;
-      // the order the slides overlap in is set on the side for as long as they move.
-      const now = around.map((el) => el.getBoundingClientRect().top);
+      // The page, card and all, takes its final height and scroll at once, and then the stack falls
+      // apart. Each slide is lifted and spreads out from under the picked one, the nearest on top,
+      // into its place in the list, where it lands: its shadow drops away and grows as it rises,
+      // then draws in under it as it comes down. The picked one keeps still, unless no scrolling
+      // could hold it, as at the top of a centred card. Only translate, scale and opacity are
+      // animated, which the compositor runs in step with one another; the order the slides overlap
+      // in is set on the side for as long as they move.
       const tops = this.#slides.map((s) => s.getBoundingClientRect().top);
       const duration = 560;
       const easing = getComputedStyle(this).getPropertyValue('--ease-out').trim();
-      around.forEach((el, i) => el.animate({ translate: [`0 ${was[i] - now[i]}px`, '0 0'] }, { duration, easing }));
+      const shadow = {
+        offset: [0, 0.15, 0.85, 1],
+        easing: ['ease-out', 'ease-in', 'linear', 'linear'],
+        opacity: [0, 1, 0.9, 0],
+        translate: ['0 0', '0 18px', '0 3px', '0 0'],
+        scale: ['1', '1 1.1', '1 1.01', '1'],
+      };
       this.#slides.forEach((s, i) => {
         s.style.zIndex = String(this.#slides.length - Math.abs(i - index));
         const spread = s.animate({ translate: [`0 ${top - tops[i]}px`, '0 0'] }, { duration, easing });
         spread.onfinish = () => s.style.removeProperty('z-index');
-        s.animate({ opacity: [0, 1, 0], offset: [0, 0.15, 1] }, { duration, pseudoElement: '::after' });
+        s.animate(shadow, { duration, pseudoElement: '::after' });
       });
     }
 
