@@ -23,24 +23,9 @@ import { CAROUSEL } from '../config';
 </live-ticker>
 
 <style>
-  /* --slide-body is the room every slide gets, so the ticker keeps one height as it turns. */
   live-ticker {
     display: block;
-    --slide-body: 148px;
     --progress: var(--accent-bright);
-  }
-
-  /* Below 792px the card is narrower than its full 760px, so descriptions may wrap to a third line. */
-  @media (max-width: 791px) {
-    live-ticker {
-      --slide-body: 169px;
-    }
-  }
-
-  @media (max-width: 640px) {
-    live-ticker {
-      --slide-body: 186px;
-    }
   }
 
   .ticker {
@@ -63,7 +48,6 @@ import { CAROUSEL } from '../config';
     flex: 0 0 100%;
     box-sizing: border-box;
     min-width: 0;
-    min-height: calc(var(--slide-body) + 48px);
     padding: 24px var(--gutter);
     display: flex;
     flex-direction: column;
@@ -103,7 +87,8 @@ import { CAROUSEL } from '../config';
     }
   }
 
-  /* Enhanced: all slides share one grid cell, so the ticker is as tall as its tallest slide. */
+  /* Enhanced: all slides share one grid cell, so the ticker keeps the height of the tallest one
+     as it turns, however long a translation makes it. */
   live-ticker[data-enhanced] .track {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -113,7 +98,6 @@ import { CAROUSEL } from '../config';
 
   live-ticker[data-enhanced] .track > :global(.slide) {
     grid-area: 1 / 1;
-    min-height: calc(var(--slide-body) + 76px);
     padding-bottom: 52px;
     visibility: hidden;
   }

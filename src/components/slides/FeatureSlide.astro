@@ -33,14 +33,13 @@ const meta = await slot('meta');
 
 <style>
   /* The slide fills its strip so every one is laid out the same way. The text on top wraps
-     and fades out at the bottom when it runs long; the details stay on one line at the bottom
-     and fade out on the right. Each fade covers padding, so only overflow reaches it. */
+     and the strip grows to hold all of it; the details stay on one line at the bottom and fade
+     out on the right, over padding, so only overflow reaches the fade. */
   .feature {
     flex: 1;
-    min-height: 0;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 18px;
     color: inherit;
     text-decoration: none;
   }
@@ -56,14 +55,10 @@ const meta = await slot('meta');
   }
 
   .body {
-    flex: 1 1 0;
-    min-height: 0;
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 4px;
-    padding-bottom: 16px;
-    overflow: hidden;
-    mask-image: linear-gradient(to bottom, #000 calc(100% - 16px), transparent);
   }
 
   .eyebrow {
@@ -100,7 +95,7 @@ const meta = await slot('meta');
   }
 
   /* Reaches 4px into the gutter on the left so a link's padding there is not clipped. As tall as
-     a link whatever it holds, so the text above has the same room on every slide. */
+     a link whatever it holds, so the details sit on the same line on every slide. */
   .meta {
     flex: none;
     display: flex;
