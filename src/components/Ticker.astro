@@ -1,4 +1,5 @@
 ---
+import TickerControls from './TickerControls.astro';
 import { CAROUSEL } from '../config';
 
 // Without JavaScript this is a CSS scroll-snap carousel of every slide. The script turns it into
@@ -12,10 +13,7 @@ import { CAROUSEL } from '../config';
     <ul class="track">
       <slot />
     </ul>
-    <div class="controls" hidden>
-      <ol class="progress" aria-label="Slides"></ol>
-      <button class="all" type="button">Show all</button>
-    </div>
+    <TickerControls />
   </section>
 </live-ticker>
 
@@ -169,118 +167,6 @@ import { CAROUSEL } from '../config';
     outline: none;
   }
 
-  .controls {
-    position: absolute;
-    right: calc(var(--gutter) - 12px);
-    bottom: 0;
-    left: var(--gutter);
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .controls[hidden] {
-    display: none;
-  }
-
-  .progress {
-    flex: 1;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    gap: 6px;
-  }
-
-  .progress :global(li) {
-    flex: 1;
-    min-width: 0;
-  }
-
-  /* Each segment is a button as tall as Show all, around a thin bar. */
-  .progress :global(button) {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 44px;
-    padding: 0;
-    border: 0;
-    border-radius: 4px;
-    background: transparent;
-    cursor: pointer;
-  }
-
-  .progress :global(button:focus-visible) {
-    outline: 2px solid var(--ink);
-  }
-
-  .progress :global(.bar) {
-    flex: 1;
-    height: 3px;
-    border-radius: 2px;
-    background: var(--rule);
-    overflow: hidden;
-    transition: height 120ms;
-  }
-
-  /* The current segment stands out even before it starts filling, as when rotation is paused. */
-  .progress :global(:is(button:hover, [aria-current]) .bar) {
-    background: color-mix(in srgb, var(--ink) 28%, transparent);
-  }
-
-  .progress :global(button:hover .bar) {
-    height: 5px;
-  }
-
-  .progress :global(.fill) {
-    display: block;
-    height: 100%;
-    background: var(--progress);
-    transform: scaleX(0);
-    transform-origin: left;
-  }
-
-  .progress :global([data-done] .fill) {
-    transform: none;
-  }
-
-  .progress :global([aria-current] .fill) {
-    animation: fill var(--slide-duration) linear forwards;
-  }
-
-  live-ticker:is([data-paused], [data-held]) .progress :global(.fill) {
-    animation-play-state: paused;
-  }
-
-  @keyframes fill {
-    to {
-      transform: none;
-    }
-  }
-
-  /* As tall as the segments, with its label in line with the text above */
-  .all {
-    flex: none;
-    height: 44px;
-    padding: 0 12px;
-    border: 0;
-    border-radius: 8px;
-    background: transparent;
-    color: var(--ink-2);
-    font: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  .all:hover {
-    color: var(--ink);
-  }
-
-  .all:focus-visible {
-    outline: 2px solid var(--ink);
-  }
-
   /* On paper the slides are laid out as when expanded, whatever the ticker is showing, with no
      slide split across pages */
   @media print {
@@ -300,8 +186,7 @@ import { CAROUSEL } from '../config';
     /* The layers for lifting slides are only for the screen. Printed without backgrounds, the
        strip's copy would come out white and hide the rule. */
     .track > :global(.slide)::before,
-    .track > :global(.slide)::after,
-    .controls {
+    .track > :global(.slide)::after {
       display: none;
     }
   }

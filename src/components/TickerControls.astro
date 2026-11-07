@@ -1,0 +1,131 @@
+---
+// The ticker's controls: a progress bar, which the ticker's script fills with a segment per slide,
+// and Show all. Hidden until that script shows them, they draw what it sets: aria-current and
+// data-done on the segments, and on live-ticker data-paused or data-held, which hold the current
+// segment's fill.
+---
+
+<div class="controls" hidden>
+  <ol class="progress" aria-label="Slides"></ol>
+  <button class="all" type="button">Show all</button>
+</div>
+
+<style>
+  .controls {
+    position: absolute;
+    right: calc(var(--gutter) - 12px);
+    bottom: 0;
+    left: var(--gutter);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .controls[hidden] {
+    display: none;
+  }
+
+  .progress {
+    flex: 1;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    gap: 6px;
+  }
+
+  .progress :global(li) {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Each segment is a button as tall as Show all, around a thin bar. */
+  .progress :global(button) {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .progress :global(button:focus-visible) {
+    outline: 2px solid var(--ink);
+  }
+
+  .progress :global(.bar) {
+    flex: 1;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--rule);
+    overflow: hidden;
+    transition: height 120ms;
+  }
+
+  /* The current segment stands out even before it starts filling, as when rotation is paused. */
+  .progress :global(:is(button:hover, [aria-current]) .bar) {
+    background: color-mix(in srgb, var(--ink) 28%, transparent);
+  }
+
+  .progress :global(button:hover .bar) {
+    height: 5px;
+  }
+
+  .progress :global(.fill) {
+    display: block;
+    height: 100%;
+    background: var(--progress);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .progress :global([data-done] .fill) {
+    transform: none;
+  }
+
+  .progress :global([aria-current] .fill) {
+    animation: fill var(--slide-duration) linear forwards;
+  }
+
+  :global(live-ticker:is([data-paused], [data-held])) .progress :global(.fill) {
+    animation-play-state: paused;
+  }
+
+  @keyframes fill {
+    to {
+      transform: none;
+    }
+  }
+
+  /* As tall as the segments, with its label in line with the text above */
+  .all {
+    flex: none;
+    height: 44px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--ink-2);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .all:hover {
+    color: var(--ink);
+  }
+
+  .all:focus-visible {
+    outline: 2px solid var(--ink);
+  }
+
+  @media print {
+    .controls {
+      display: none;
+    }
+  }
+</style>
