@@ -20,9 +20,11 @@ import { CAROUSEL } from '../config';
 </live-ticker>
 
 <style>
+  /* --shade is how far a lifted slide's shadow blurs. */
   live-ticker {
     display: block;
     --progress: var(--accent-bright);
+    --shade: 12px;
   }
 
   .ticker {
@@ -70,11 +72,12 @@ import { CAROUSEL } from '../config';
     background: var(--strip);
   }
 
-  /* A blurred shade rather than box-shadow, so it can grow without leaving a gap around the slide */
+  /* A blurred shade rather than box-shadow, so it can grow and shrink without leaving a gap around
+     the slide. Faint, since the shades of a stack add up. */
   .track > :global(.slide)::after {
     z-index: -2;
-    background: rgb(22 24 27 / 0.3);
-    filter: blur(14px);
+    background: rgb(22 24 27 / 0.12);
+    filter: blur(var(--shade));
     opacity: 0;
   }
 
@@ -386,15 +389,15 @@ import { CAROUSEL } from '../config';
     }
 
     // Lays every slide out for good. The picked one stays where the ticker showed it while the
-    // rest open up around it, and takes the focus so the keyboard carries on from there. It stays
-    // active too, so one that was not showing yet enters as it would in the ticker.
+    // rest open up around it, and takes the focus so the keyboard carries on from there. None is
+    // active any more, so nothing inside the slides moves, not even an entrance cut short.
     #expand(index: number) {
       const slide = this.#slides[index];
       const top = slide.getBoundingClientRect().top;
       clearTimeout(this.#timer);
       const expand = () => {
         this.toggleAttribute('data-expanded', true);
-        this.#slides.forEach((s) => s.toggleAttribute('data-active', s === slide));
+        this.#slides.forEach((s) => s.removeAttribute('data-active'));
         this.querySelector<HTMLElement>('.controls')!.hidden = true;
         this.querySelector('.ticker')!.removeAttribute('aria-roledescription');
         window.scrollBy(0, slide.getBoundingClientRect().top - top);
@@ -410,24 +413,21 @@ import { CAROUSEL } from '../config';
 
       // The page takes its final height and scroll at once, the card the ticker sits in is pulled
       // out to it from where it was, and the stack falls apart: each slide is lifted and spreads
-      // out from under the picked one, the nearest on top, into its place in the list. Its shadow
-      // rises in the first moment, then shrinks with the distance left to go, in slides, so the
-      // picked one, which keeps still unless no scrolling could hold it, casts none. Only
-      // translate, scale and opacity are animated, which the compositor runs in step with the
-      // card; the order the slides overlap in is set on the side for as long as they move.
+      // out from under the picked one, the nearest on top, into its place in the list, where it
+      // lands. The picked one keeps still, unless no scrolling could hold it. Every shadow starts
+      // reaching as far past its slide and draws in at an even pace, till the slide hides it, blur
+      // and all. Only translate, scale and opacity are animated, which the compositor runs in step
+      // with the card; the order the slides overlap in is set on the side for as long as they move.
       const tops = this.#slides.map((s) => s.getBoundingClientRect().top);
-      const height = slide.offsetHeight;
+      const blur = parseFloat(getComputedStyle(this).getPropertyValue('--shade'));
       this.#slides.forEach((s, i) => {
-        const by = top - tops[i];
         s.style.zIndex = String(this.#slides.length - Math.abs(i - index));
-        const spread = s.animate({ translate: [`0 ${by}px`, '0 0'] }, timing);
+        const spread = s.animate({ translate: [`0 ${top - tops[i]}px`, '0 0'] }, timing);
         spread.onfinish = () => s.style.removeProperty('z-index');
-        const far = Math.abs(by) / height;
-        if (!far) return;
-        const offset = [...new Set([0, 0.12, Math.max(0.12, 1 - 1 / far), 1])];
-        const lift = offset.map((at) => (at ? Math.min(1, far * (1 - at)) : 0));
-        const scale = lift.map((l) => `${1 + 0.04 * l} ${1 + 0.3 * l}`);
-        s.animate({ offset, opacity: lift, scale }, { ...timing, pseudoElement: '::after' });
+        const { offsetWidth: w, offsetHeight: h } = s;
+        const lifted = `${(w + 4 * blur) / w} ${(h + 4 * blur) / h}`;
+        const landed = `${w / (w + 6 * blur)} ${h / (h + 6 * blur)}`;
+        s.animate({ opacity: [1, 1], scale: [lifted, landed] }, { duration: timing.duration, pseudoElement: '::after' });
       });
     }
 
