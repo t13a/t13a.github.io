@@ -81,6 +81,25 @@ import { CAROUSEL } from '../config';
     opacity: 0;
   }
 
+  /* A rule between two slides, drawn on a layer of its own over the clear border while they land,
+     so the compositor can fade it in. It rides on the edge of whichever of the two is on top. */
+  .track > :global(.slide) > :global(.rule) {
+    position: absolute;
+    right: 0;
+    left: 0;
+    height: 1px;
+    background: var(--rule);
+    pointer-events: none;
+  }
+
+  .track > :global(.slide) > :global(.rule[data-edge='top']) {
+    top: -1px;
+  }
+
+  .track > :global(.slide) > :global(.rule[data-edge='bottom']) {
+    bottom: -1px;
+  }
+
   .track > :global(.slide[hidden]) {
     display: none;
   }
@@ -141,8 +160,8 @@ import { CAROUSEL } from '../config';
     visibility: visible;
   }
 
-  live-ticker[data-expanded] .track > :global(.slide + .slide) {
-    border-top: 1px solid var(--rule);
+  live-ticker[data-expanded] .track > :global(.slide:not(:last-child)) {
+    border-bottom: 1px solid var(--rule);
   }
 
   /* Focused only by the script, to carry the keyboard on from the slide picked */
@@ -274,8 +293,8 @@ import { CAROUSEL } from '../config';
       break-inside: avoid;
     }
 
-    .track > :global(.slide + .slide) {
-      border-top: 1px solid var(--rule);
+    .track > :global(.slide:not(:last-child)) {
+      border-bottom: 1px solid var(--rule);
     }
 
     /* The layers for lifting slides are only for the screen. Printed without backgrounds, the
@@ -419,15 +438,30 @@ import { CAROUSEL } from '../config';
       // and all. Only translate, scale and opacity are animated, which the compositor runs in step
       // with the card. For as long as they move, the order the slides overlap in is set on the side,
       // and the rules between them are made clear, keeping their pixel so nothing measured shifts.
+      // Each rule comes back on a layer of its own as the slides land, carried by whichever of its
+      // two slides is on top, the one nearer the picked one, then is handed back to the border.
       const tops = this.#slides.map((s) => s.getBoundingClientRect().top);
       const blur = parseFloat(getComputedStyle(this).getPropertyValue('--shade'));
+      const last = this.#slides.length - 1;
+      const rule = (s: HTMLElement, edge: string) => {
+        const r = s.appendChild(document.createElement('span'));
+        r.className = 'rule';
+        r.dataset.edge = edge;
+        r.animate({ opacity: [0, 0, 1], offset: [0, 0.6, 1] }, { duration: timing.duration, fill: 'forwards' });
+        return r;
+      };
       this.#slides.forEach((s, i) => {
         s.style.zIndex = String(this.#slides.length - Math.abs(i - index));
-        s.style.borderTopColor = 'transparent';
+        s.style.borderBottomColor = 'transparent';
+        const rules = [
+          ...(i > 0 && i <= index ? [rule(s, 'top')] : []),
+          ...(i < last && i >= index ? [rule(s, 'bottom')] : []),
+        ];
         const spread = s.animate({ translate: [`0 ${top - tops[i]}px`, '0 0'] }, timing);
         spread.onfinish = () => {
           s.style.removeProperty('z-index');
-          s.style.removeProperty('border-top-color');
+          s.style.removeProperty('border-bottom-color');
+          rules.forEach((r) => r.remove());
         };
         const { offsetWidth: w, offsetHeight: h } = s;
         const lifted = `${(w + 4 * blur) / w} ${(h + 4 * blur) / h}`;
