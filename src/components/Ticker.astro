@@ -27,7 +27,6 @@ import { CAROUSEL } from '../config';
 
   .ticker {
     position: relative;
-    background: var(--strip);
   }
 
   .track {
@@ -41,11 +40,13 @@ import { CAROUSEL } from '../config';
     scrollbar-width: none;
   }
 
+  /* Each slide carries the strip, so slides can cover one another like cards. */
   .track > :global(.slide) {
     flex: 0 0 100%;
     box-sizing: border-box;
     min-width: 0;
     padding: 24px var(--gutter);
+    background: var(--strip);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -279,29 +280,6 @@ import { CAROUSEL } from '../config';
       animation: none !important;
     }
   }
-
-  /* The card gliding up as the slides are laid out. It moves without dissolving, so nothing shows
-     twice, and the picked slide rides on a strip of its own in case others pass beneath it. */
-  ::view-transition-group(*),
-  ::view-transition-old(*),
-  ::view-transition-new(*) {
-    animation-duration: 400ms;
-    animation-timing-function: var(--ease-out);
-  }
-
-  ::view-transition-old(card),
-  ::view-transition-old(picked) {
-    display: none;
-  }
-
-  ::view-transition-new(card),
-  ::view-transition-new(picked) {
-    animation: none;
-  }
-
-  ::view-transition-group(picked) {
-    background: var(--strip);
-  }
 </style>
 
 <script>
@@ -379,36 +357,36 @@ import { CAROUSEL } from '../config';
     }
 
     // Lays every slide out for good. The picked one stays where the ticker showed it while the
-    // rest open up around it, and takes the focus so the keyboard carries on from there.
+    // rest open up around it, and takes the focus so the keyboard carries on from there. It stays
+    // active too, so one that was not showing yet enters as it would in the ticker.
     #expand(index: number) {
       const slide = this.#slides[index];
-      const top = slide.getBoundingClientRect().top;
-      clearTimeout(this.#timer);
-      const expand = () => {
-        this.toggleAttribute('data-expanded', true);
-        this.#slides.forEach((s) => s.removeAttribute('data-active'));
-        this.querySelector<HTMLElement>('.controls')!.hidden = true;
-        this.querySelector('.ticker')!.removeAttribute('aria-roledescription');
-        window.scrollBy(0, slide.getBoundingClientRect().top - top);
-        slide.tabIndex = -1;
-        slide.focus({ preventScroll: true });
-      };
-      if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) return expand();
-
-      // Scrolling holds the picked slide still, except near the top of a centred card, which the
-      // longer page lifts higher than any scroll can follow. There the card the ticker sits in
-      // glides up with the slide rather than jumping; anywhere else the page simply changes.
       const card = this.closest<HTMLElement>('.card');
-      slide.style.viewTransitionName = 'picked';
-      if (card) card.style.viewTransitionName = 'card';
-      const transition = document.startViewTransition(() => {
-        expand();
-        if (slide.getBoundingClientRect().top > top - 1) transition.skipTransition();
-      });
-      transition.ready.catch(() => {}); // rejected when skipped
-      transition.finished.finally(() => {
-        slide.style.removeProperty('view-transition-name');
-        card?.style.removeProperty('view-transition-name');
+      const top = slide.getBoundingClientRect().top;
+      const was = card?.getBoundingClientRect();
+      clearTimeout(this.#timer);
+      this.toggleAttribute('data-expanded', true);
+      this.#slides.forEach((s) => s.toggleAttribute('data-active', s === slide));
+      this.querySelector<HTMLElement>('.controls')!.hidden = true;
+      this.querySelector('.ticker')!.removeAttribute('aria-roledescription');
+      window.scrollBy(0, slide.getBoundingClientRect().top - top);
+      slide.tabIndex = -1;
+      slide.focus({ preventScroll: true });
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      // Then the stack falls apart. The card the ticker sits in moves as one piece from where it
+      // was to where the longer page leaves it, while each slide spreads out from under the picked
+      // one, the nearest on top. The picked one keeps still, unless no scrolling could hold it, as
+      // at the top of a centred card, where it rides up with the card.
+      const now = card?.getBoundingClientRect();
+      const dx = now && was ? now.left - was.left : 0;
+      const dy = now && was ? now.top - was.top : 0;
+      const tops = this.#slides.map((s) => s.getBoundingClientRect().top);
+      const timing = { duration: 560, easing: getComputedStyle(this).getPropertyValue('--ease-out').trim() };
+      card?.animate({ translate: [`${-dx}px ${-dy}px`, '0 0'] }, timing);
+      this.#slides.forEach((s, i) => {
+        const z = this.#slides.length - Math.abs(i - index);
+        s.animate({ translate: [`0 ${top - tops[i] + dy}px`, '0 0'], zIndex: [z, z] }, timing);
       });
     }
 
