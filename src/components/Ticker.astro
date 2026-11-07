@@ -40,8 +40,10 @@ import { CAROUSEL } from '../config';
     scrollbar-width: none;
   }
 
-  /* Each slide carries the strip, so slides can cover one another like cards. */
+  /* Each slide carries the strip, so slides can cover one another like cards, and a shadow that
+     shows while the script lifts them. */
   .track > :global(.slide) {
+    position: relative;
     flex: 0 0 100%;
     box-sizing: border-box;
     min-width: 0;
@@ -51,6 +53,15 @@ import { CAROUSEL } from '../config';
     flex-direction: column;
     justify-content: center;
     scroll-snap-align: start;
+  }
+
+  .track > :global(.slide)::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    box-shadow: 0 10px 28px rgb(22 24 27 / 0.22);
+    opacity: 0;
+    pointer-events: none;
   }
 
   .track > :global(.slide[hidden]) {
@@ -361,9 +372,9 @@ import { CAROUSEL } from '../config';
     // active too, so one that was not showing yet enters as it would in the ticker.
     #expand(index: number) {
       const slide = this.#slides[index];
-      const card = this.closest<HTMLElement>('.card');
       const top = slide.getBoundingClientRect().top;
-      const was = card?.getBoundingClientRect();
+      const around = [...this.parentElement!.children].filter((el) => el !== this && el.getClientRects().length);
+      const was = around.map((el) => el.getBoundingClientRect().top);
       clearTimeout(this.#timer);
       this.toggleAttribute('data-expanded', true);
       this.#slides.forEach((s) => s.toggleAttribute('data-active', s === slide));
@@ -374,22 +385,22 @@ import { CAROUSEL } from '../config';
       slide.focus({ preventScroll: true });
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-      // Then the stack falls apart. The card the ticker sits in moves as one piece from where it
-      // was to where the longer page leaves it, while each slide spreads out from under the picked
-      // one, the nearest on top. The picked one keeps still, unless no scrolling could hold it, as
-      // at the top of a centred card, where it rides up with the card. Only translate is animated,
-      // which the compositor runs, so the slides keep step with the card even when the page is
-      // busy; the order they overlap in is set on the side for as long as they move.
-      const now = card?.getBoundingClientRect();
-      const dx = now && was ? now.left - was.left : 0;
-      const dy = now && was ? now.top - was.top : 0;
+      // The page takes its final height and scroll at once, and then the stack falls apart. Each
+      // slide is lifted and spreads out from under the picked one, the nearest on top, while what
+      // sits around the ticker, like the profile, moves out of the way from where it was. The
+      // picked one keeps still, unless no scrolling could hold it, as at the top of a centred card.
+      // Only translate and opacity are animated, which the compositor runs in step with one another;
+      // the order the slides overlap in is set on the side for as long as they move.
+      const now = around.map((el) => el.getBoundingClientRect().top);
       const tops = this.#slides.map((s) => s.getBoundingClientRect().top);
-      const timing = { duration: 560, easing: getComputedStyle(this).getPropertyValue('--ease-out').trim() };
-      card?.animate({ translate: [`${-dx}px ${-dy}px`, '0 0'] }, timing);
+      const duration = 560;
+      const easing = getComputedStyle(this).getPropertyValue('--ease-out').trim();
+      around.forEach((el, i) => el.animate({ translate: [`0 ${was[i] - now[i]}px`, '0 0'] }, { duration, easing }));
       this.#slides.forEach((s, i) => {
         s.style.zIndex = String(this.#slides.length - Math.abs(i - index));
-        const spread = s.animate({ translate: [`0 ${top - tops[i] + dy}px`, '0 0'] }, timing);
+        const spread = s.animate({ translate: [`0 ${top - tops[i]}px`, '0 0'] }, { duration, easing });
         spread.onfinish = () => s.style.removeProperty('z-index');
+        s.animate({ opacity: [0, 1, 0], offset: [0, 0.15, 1] }, { duration, pseudoElement: '::after' });
       });
     }
 
