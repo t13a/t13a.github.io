@@ -84,23 +84,25 @@ import { CAROUSEL } from '../config';
     }
   }
 
-  /* Enhanced: all slides share one grid cell, so the ticker keeps the height of the tallest one
-     as it turns, however long a translation makes it. */
-  live-ticker[data-enhanced] .track {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    overflow: visible;
-    scroll-marker-group: none;
-  }
+  /* Enhanced, on screen: all slides share one grid cell, so the ticker keeps the height of the
+     tallest one as it turns, however long a translation makes it. */
+  @media screen {
+    live-ticker[data-enhanced] .track {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      overflow: visible;
+      scroll-marker-group: none;
+    }
 
-  live-ticker[data-enhanced] .track > :global(.slide) {
-    grid-area: 1 / 1;
-    padding-bottom: 52px;
-    visibility: hidden;
-  }
+    live-ticker[data-enhanced] .track > :global(.slide) {
+      grid-area: 1 / 1;
+      padding-bottom: 52px;
+      visibility: hidden;
+    }
 
-  live-ticker[data-enhanced] .track > :global(.slide[data-active]) {
-    visibility: visible;
+    live-ticker[data-enhanced] .track > :global(.slide[data-active]) {
+      visibility: visible;
+    }
   }
 
   /* Expanded: one slide under another, each as tall as its own text */
@@ -230,6 +232,27 @@ import { CAROUSEL } from '../config';
   .all:focus-visible {
     outline: 2px solid var(--ink);
   }
+
+  /* On paper the slides are laid out as when expanded, whatever the ticker is showing, with no
+     slide split across pages */
+  @media print {
+    .track {
+      display: block;
+      overflow: visible;
+    }
+
+    .track > :global(.slide) {
+      break-inside: avoid;
+    }
+
+    .track > :global(.slide + .slide) {
+      border-top: 1px solid var(--rule);
+    }
+
+    .controls {
+      display: none;
+    }
+  }
 </style>
 
 <style is:global>
@@ -251,7 +274,7 @@ import { CAROUSEL } from '../config';
   @keyframes enter-pop { from { opacity: 0; transform: scale(0.55) rotate(-12deg); } }
   @keyframes enter-sprout { from { opacity: 0; transform: scale(0.2); } }
 
-  @media (prefers-reduced-motion: reduce) {
+  @media (prefers-reduced-motion: reduce), print {
     [data-enter] {
       animation: none !important;
     }

@@ -50,6 +50,15 @@ import { GITHUB_LOGIN } from '../config';
     outline-offset: 3px;
   }
 
+  /* Drawn in outline on paper, where backgrounds may not print */
+  @media print {
+    a {
+      border: 1px solid;
+      background: none;
+      color: var(--ink);
+    }
+  }
+
   /* Stacked on narrow screens, where the line sits at the foot of the card with the same room
      above and below itself */
   @media (max-width: 640px) {

@@ -33,6 +33,12 @@
     border-radius: 14px;
   }
 
+  @media print {
+    .card::before {
+      display: none;
+    }
+  }
+
   /* Full width and flush with the top of the screen */
   @media (max-width: 640px) {
     .card {

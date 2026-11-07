@@ -38,4 +38,17 @@
     letter-spacing: 0.02em;
     color: var(--caption);
   }
+
+  /* Paper stays white, with only the card and the copyright under it */
+  @media print {
+    .page {
+      min-height: 0;
+      padding: 0;
+      background: none;
+    }
+
+    .copyright {
+      color: var(--ink-3);
+    }
+  }
 </style>
