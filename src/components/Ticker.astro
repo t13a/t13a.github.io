@@ -256,6 +256,29 @@ import { CAROUSEL } from '../config';
       animation: none !important;
     }
   }
+
+  /* The card gliding up as the slides are laid out. It moves without dissolving, so nothing shows
+     twice, and the picked slide rides on a strip of its own in case others pass beneath it. */
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 400ms;
+    animation-timing-function: var(--ease-out);
+  }
+
+  ::view-transition-old(card),
+  ::view-transition-old(picked) {
+    display: none;
+  }
+
+  ::view-transition-new(card),
+  ::view-transition-new(picked) {
+    animation: none;
+  }
+
+  ::view-transition-group(picked) {
+    background: var(--strip);
+  }
 </style>
 
 <script>
@@ -338,13 +361,32 @@ import { CAROUSEL } from '../config';
       const slide = this.#slides[index];
       const top = slide.getBoundingClientRect().top;
       clearTimeout(this.#timer);
-      this.toggleAttribute('data-expanded', true);
-      this.#slides.forEach((s) => s.removeAttribute('data-active'));
-      this.querySelector<HTMLElement>('.controls')!.hidden = true;
-      this.querySelector('.ticker')!.removeAttribute('aria-roledescription');
-      window.scrollBy(0, slide.getBoundingClientRect().top - top);
-      slide.tabIndex = -1;
-      slide.focus({ preventScroll: true });
+      const expand = () => {
+        this.toggleAttribute('data-expanded', true);
+        this.#slides.forEach((s) => s.removeAttribute('data-active'));
+        this.querySelector<HTMLElement>('.controls')!.hidden = true;
+        this.querySelector('.ticker')!.removeAttribute('aria-roledescription');
+        window.scrollBy(0, slide.getBoundingClientRect().top - top);
+        slide.tabIndex = -1;
+        slide.focus({ preventScroll: true });
+      };
+      if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) return expand();
+
+      // Scrolling holds the picked slide still, except near the top of a centred card, which the
+      // longer page lifts higher than any scroll can follow. There the card the ticker sits in
+      // glides up with the slide rather than jumping; anywhere else the page simply changes.
+      const card = this.closest<HTMLElement>('.card');
+      slide.style.viewTransitionName = 'picked';
+      if (card) card.style.viewTransitionName = 'card';
+      const transition = document.startViewTransition(() => {
+        expand();
+        if (slide.getBoundingClientRect().top > top - 1) transition.skipTransition();
+      });
+      transition.ready.catch(() => {}); // rejected when skipped
+      transition.finished.finally(() => {
+        slide.style.removeProperty('view-transition-name');
+        card?.style.removeProperty('view-transition-name');
+      });
     }
 
     // The timer counts down the current slide's remaining time and stops while paused, held or
