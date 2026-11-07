@@ -42,7 +42,7 @@ import { CAROUSEL } from '../config';
 
   /* Each slide carries the strip, so slides can cover one another like cards, and a shadow that
      shows while the script lifts them. The shadow lies between the strip and a copy of it on top,
-     so it can move and grow without ever falling on the slide itself. */
+     so it can grow without ever falling on the slide itself. */
   .track > :global(.slide) {
     position: relative;
     isolation: isolate;
@@ -70,9 +70,11 @@ import { CAROUSEL } from '../config';
     background: var(--strip);
   }
 
+  /* A blurred shade rather than box-shadow, so it can grow without leaving a gap around the slide */
   .track > :global(.slide)::after {
     z-index: -2;
-    box-shadow: 0 0 24px rgb(22 24 27 / 0.3);
+    background: rgb(22 24 27 / 0.3);
+    filter: blur(14px);
     opacity: 0;
   }
 
@@ -390,37 +392,42 @@ import { CAROUSEL } from '../config';
       const slide = this.#slides[index];
       const top = slide.getBoundingClientRect().top;
       clearTimeout(this.#timer);
-      this.toggleAttribute('data-expanded', true);
-      this.#slides.forEach((s) => s.toggleAttribute('data-active', s === slide));
-      this.querySelector<HTMLElement>('.controls')!.hidden = true;
-      this.querySelector('.ticker')!.removeAttribute('aria-roledescription');
-      window.scrollBy(0, slide.getBoundingClientRect().top - top);
+      const expand = () => {
+        this.toggleAttribute('data-expanded', true);
+        this.#slides.forEach((s) => s.toggleAttribute('data-active', s === slide));
+        this.querySelector<HTMLElement>('.controls')!.hidden = true;
+        this.querySelector('.ticker')!.removeAttribute('aria-roledescription');
+        window.scrollBy(0, slide.getBoundingClientRect().top - top);
+      };
+      const card = this.closest('sheet-card');
+      const timing = { duration: 560, easing: getComputedStyle(this).getPropertyValue('--ease-out').trim() };
+      const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (card && !still) card.stretch(expand, timing);
+      else expand();
       slide.tabIndex = -1;
       slide.focus({ preventScroll: true });
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (still) return;
 
-      // The page, card and all, takes its final height and scroll at once, and then the stack falls
-      // apart. Each slide is lifted and spreads out from under the picked one, the nearest on top,
-      // into its place in the list, where it lands: its shadow drops away and grows as it rises,
-      // then draws in under it as it comes down. The picked one keeps still, unless no scrolling
-      // could hold it, as at the top of a centred card. Only translate, scale and opacity are
-      // animated, which the compositor runs in step with one another; the order the slides overlap
-      // in is set on the side for as long as they move.
+      // The page takes its final height and scroll at once, the card the ticker sits in is pulled
+      // out to it from where it was, and the stack falls apart: each slide is lifted and spreads
+      // out from under the picked one, the nearest on top, into its place in the list. Its shadow
+      // rises in the first moment, then shrinks with the distance left to go, in slides, so the
+      // picked one, which keeps still unless no scrolling could hold it, casts none. Only
+      // translate, scale and opacity are animated, which the compositor runs in step with the
+      // card; the order the slides overlap in is set on the side for as long as they move.
       const tops = this.#slides.map((s) => s.getBoundingClientRect().top);
-      const duration = 560;
-      const easing = getComputedStyle(this).getPropertyValue('--ease-out').trim();
-      const shadow = {
-        offset: [0, 0.15, 0.85, 1],
-        easing: ['ease-out', 'ease-in', 'linear', 'linear'],
-        opacity: [0, 1, 0.9, 0],
-        translate: ['0 0', '0 18px', '0 3px', '0 0'],
-        scale: ['1', '1 1.1', '1 1.01', '1'],
-      };
+      const height = slide.offsetHeight;
       this.#slides.forEach((s, i) => {
+        const by = top - tops[i];
         s.style.zIndex = String(this.#slides.length - Math.abs(i - index));
-        const spread = s.animate({ translate: [`0 ${top - tops[i]}px`, '0 0'] }, { duration, easing });
+        const spread = s.animate({ translate: [`0 ${by}px`, '0 0'] }, timing);
         spread.onfinish = () => s.style.removeProperty('z-index');
-        s.animate(shadow, { duration, pseudoElement: '::after' });
+        const far = Math.abs(by) / height;
+        if (!far) return;
+        const offset = [...new Set([0, 0.12, Math.max(0.12, 1 - 1 / far), 1])];
+        const lift = offset.map((at) => (at ? Math.min(1, far * (1 - at)) : 0));
+        const scale = lift.map((l) => `${1 + 0.04 * l} ${1 + 0.3 * l}`);
+        s.animate({ offset, opacity: lift, scale }, { ...timing, pseudoElement: '::after' });
       });
     }
 

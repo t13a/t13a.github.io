@@ -1,17 +1,22 @@
 ---
 // The shadow is a blurred layer behind the sheet rather than box-shadow, whose tiled
-// rendering can leave hairlines when mobile Firefox zooms.
+// rendering can leave hairlines when mobile Firefox zooms. The sheet itself is drawn in three
+// pieces, a cap at each end and a body between, so that stretch() can pull its top and bottom
+// apart without bending the round corners.
 ---
 
-<div class="card">
+<sheet-card class="card">
   <article class="sheet">
     <slot />
   </article>
-</div>
+</sheet-card>
 
 <style>
   .card {
+    --radius: 14px;
+    display: block;
     position: relative;
+    isolation: isolate;
     width: 100%;
     max-width: 760px;
     margin: auto 0;
@@ -21,16 +26,48 @@
     content: '';
     position: absolute;
     inset: 0;
+    z-index: -2;
     translate: 0 8px;
-    border-radius: 14px;
+    transform-origin: top;
+    border-radius: var(--radius);
     background: rgb(0 0 0 / 0.55);
     filter: blur(10px);
   }
 
+  /* The body, between the caps */
+  .card::after {
+    content: '';
+    position: absolute;
+    inset: var(--radius) 0;
+    z-index: -1;
+    transform-origin: top;
+    background: var(--card);
+  }
+
   .sheet {
     position: relative;
+  }
+
+  /* The caps, a pixel taller than the corners so they overlap the body */
+  .sheet::before,
+  .sheet::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    left: 0;
+    z-index: -1;
+    height: calc(var(--radius) + 1px);
     background: var(--card);
-    border-radius: 14px;
+  }
+
+  .sheet::before {
+    top: 0;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+
+  .sheet::after {
+    bottom: 0;
+    border-radius: 0 0 var(--radius) var(--radius);
   }
 
   @media print {
@@ -42,12 +79,46 @@
   /* Full width and flush with the top of the screen */
   @media (max-width: 640px) {
     .card {
+      --radius: 0px;
       margin-top: 0;
-    }
-
-    .card::before,
-    .sheet {
-      border-radius: 0;
     }
   }
 </style>
+
+<script>
+  class SheetCard extends HTMLElement {
+    // Runs change, which makes the sheet taller or shorter, and then pulls the sheet's top and
+    // bottom from where they were to where they now are, carrying what sits at each end.
+    stretch(change: () => void, timing: KeyframeAnimationOptions) {
+      const sheet = this.querySelector<HTMLElement>('.sheet')!;
+      const ends = [...sheet.children].filter((el) => el.getClientRects().length);
+      const radius = parseFloat(getComputedStyle(this).getPropertyValue('--radius'));
+      const was = this.getBoundingClientRect();
+      change();
+      const now = this.getBoundingClientRect();
+      const top = was.top - now.top;
+      const bottom = was.bottom - now.bottom;
+      const pull = (el: Element, by: number, pseudoElement?: string) =>
+        el.animate({ translate: [`0 ${by}px`, '0 0'] }, { ...timing, pseudoElement });
+      const stretch = (pseudoElement: string, inset: number) =>
+        this.animate(
+          { transform: [`translateY(${top}px) scaleY(${(was.height - inset) / (now.height - inset)})`, 'none'] },
+          { ...timing, pseudoElement },
+        );
+      pull(sheet, top, '::before');
+      pull(sheet, bottom, '::after');
+      pull(ends[0], top);
+      pull(ends[ends.length - 1], bottom);
+      stretch('::before', 0);
+      stretch('::after', 2 * radius);
+    }
+  }
+
+  declare global {
+    interface HTMLElementTagNameMap {
+      'sheet-card': SheetCard;
+    }
+  }
+
+  customElements.define('sheet-card', SheetCard);
+</script>
