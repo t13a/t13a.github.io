@@ -377,7 +377,9 @@ import { CAROUSEL } from '../config';
       // Then the stack falls apart. The card the ticker sits in moves as one piece from where it
       // was to where the longer page leaves it, while each slide spreads out from under the picked
       // one, the nearest on top. The picked one keeps still, unless no scrolling could hold it, as
-      // at the top of a centred card, where it rides up with the card.
+      // at the top of a centred card, where it rides up with the card. Only translate is animated,
+      // which the compositor runs, so the slides keep step with the card even when the page is
+      // busy; the order they overlap in is set on the side for as long as they move.
       const now = card?.getBoundingClientRect();
       const dx = now && was ? now.left - was.left : 0;
       const dy = now && was ? now.top - was.top : 0;
@@ -385,8 +387,9 @@ import { CAROUSEL } from '../config';
       const timing = { duration: 560, easing: getComputedStyle(this).getPropertyValue('--ease-out').trim() };
       card?.animate({ translate: [`${-dx}px ${-dy}px`, '0 0'] }, timing);
       this.#slides.forEach((s, i) => {
-        const z = this.#slides.length - Math.abs(i - index);
-        s.animate({ translate: [`0 ${top - tops[i] + dy}px`, '0 0'], zIndex: [z, z] }, timing);
+        s.style.zIndex = String(this.#slides.length - Math.abs(i - index));
+        const spread = s.animate({ translate: [`0 ${top - tops[i] + dy}px`, '0 0'] }, timing);
+        spread.onfinish = () => s.style.removeProperty('z-index');
       });
     }
 
