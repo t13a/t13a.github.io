@@ -4,8 +4,8 @@ on:
   push:
     branches: [master]
   schedule:
-    # Monthly data refresh. Its commit also keeps GitHub from disabling the schedule
-    # after 60 days without repository activity.
+    # Monthly refresh and rebuild, which also moves the years on the page on. Its commit
+    # keeps GitHub from disabling the schedule after 60 days without repository activity.
     - cron: '0 0 1 * *'
   workflow_dispatch:
 
@@ -26,20 +26,22 @@ jobs:
           cache: npm
       - run: npm ci
 
-      # Pushes made with GITHUB_TOKEN start no new workflow runs, so the refreshed data
-      # is committed and built in this same run.
-      - name: Refresh GitHub data
+      # Pushes made with GITHUB_TOKEN start no new workflow runs, so the refreshed photo
+      # is committed and built in this same run. The commit is made even when the photo
+      # is unchanged, since it is what keeps the schedule alive.
+      - name: Refresh GitHub photo
         if: github.event_name != 'push'
         run: npm run fetch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Commit refreshed data
+      - name: Commit refreshed photo
         if: github.event_name != 'push'
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add src/data/github.json src/assets/avatar.png
-          git diff --cached --quiet || { git commit -m 'Refresh GitHub data'; git push; }
+          git add src/assets/avatar.png
+          git commit --allow-empty -m 'Refresh from GitHub'
+          git push
 
       - run: npm run build
       - uses: actions/upload-pages-artifact@v5
