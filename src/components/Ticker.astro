@@ -1,10 +1,10 @@
 ---
-import { Icon } from 'astro-icon/components';
 import { CAROUSEL } from '../config';
 
 // Without JavaScript this is a CSS scroll-snap carousel of every slide. The script turns it into
 // an auto-advancing ticker that shows the slides one at a time, in the order they are written,
-// with a progress bar whose segments jump to their slide.
+// with a progress bar. To read at one's own pace, Show all lays every slide out in a list, and so
+// does a segment of the bar, keeping its own slide where the ticker was.
 ---
 
 <live-ticker style={`--slide-duration: ${CAROUSEL.slideSeconds}s`}>
@@ -14,10 +14,7 @@ import { CAROUSEL } from '../config';
     </ul>
     <div class="controls" hidden>
       <ol class="progress" aria-label="Slides"></ol>
-      <button class="pause" type="button" aria-label="Pause rotation">
-        <Icon is:inline name="lucide:pause" aria-hidden="true" class="when-playing" />
-        <Icon is:inline name="lucide:play" aria-hidden="true" class="when-paused" />
-      </button>
+      <button class="all" type="button">Show all</button>
     </div>
   </section>
 </live-ticker>
@@ -106,9 +103,25 @@ import { CAROUSEL } from '../config';
     visibility: visible;
   }
 
+  /* Expanded: one slide under another, each as tall as its own text */
+  live-ticker[data-expanded] .track > :global(.slide) {
+    grid-area: auto;
+    padding-bottom: 24px;
+    visibility: visible;
+  }
+
+  live-ticker[data-expanded] .track > :global(.slide + .slide) {
+    border-top: 1px solid var(--rule);
+  }
+
+  /* Focused only by the script, to carry the keyboard on from the slide picked */
+  live-ticker .track > :global(.slide:focus) {
+    outline: none;
+  }
+
   .controls {
     position: absolute;
-    right: 10px;
+    right: calc(var(--gutter) - 12px);
     bottom: 0;
     left: var(--gutter);
     display: flex;
@@ -134,7 +147,7 @@ import { CAROUSEL } from '../config';
     min-width: 0;
   }
 
-  /* Each segment is a button as tall as the pause button, around a thin bar. */
+  /* Each segment is a button as tall as Show all, around a thin bar. */
   .progress :global(button) {
     display: flex;
     align-items: center;
@@ -195,38 +208,27 @@ import { CAROUSEL } from '../config';
     }
   }
 
-  .pause {
+  /* As tall as the segments, with its label in line with the text above */
+  .all {
     flex: none;
-    width: 44px;
     height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 0 12px;
     border: 0;
     border-radius: 8px;
     background: transparent;
     color: var(--ink-2);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
   }
 
-  .pause:focus-visible {
+  .all:hover {
+    color: var(--ink);
+  }
+
+  .all:focus-visible {
     outline: 2px solid var(--ink);
-  }
-
-  .pause svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  /* Lucide draws outlines; fill them for solid play and pause marks. The icons are inlined
-     because styles do not reach into a sprite's <use> copies. */
-  .pause svg :global(*) {
-    fill: currentColor;
-  }
-
-  live-ticker[data-paused] .when-playing,
-  live-ticker:not([data-paused]) .when-paused {
-    display: none;
   }
 </style>
 
@@ -284,7 +286,7 @@ import { CAROUSEL } from '../config';
         const button = document.createElement('button');
         button.type = 'button';
         button.setAttribute('aria-label', s.getAttribute('aria-label')!);
-        button.addEventListener('click', () => i !== this.#index && this.#show(i));
+        button.addEventListener('click', () => this.#expand(i));
         const bar = button.appendChild(document.createElement('span'));
         bar.className = 'bar';
         bar.appendChild(document.createElement('span')).className = 'fill';
@@ -292,13 +294,10 @@ import { CAROUSEL } from '../config';
         return button;
       });
 
-      const button = this.querySelector<HTMLButtonElement>('.pause')!;
-      button.addEventListener('click', () => {
-        const paused = this.toggleAttribute('data-paused');
-        button.setAttribute('aria-label', paused ? 'Resume rotation' : 'Pause rotation');
-        this.#sync();
-      });
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) button.click();
+      this.querySelector('.all')!.addEventListener('click', () => this.#expand(0));
+
+      // Without motion the ticker stays on its first slide.
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) this.toggleAttribute('data-paused', true);
 
       // Hold still while the pointer or keyboard focus is inside, so links can be followed.
       const section = this.querySelector<HTMLElement>('.ticker')!;
@@ -333,16 +332,29 @@ import { CAROUSEL } from '../config';
       this.#sync();
     }
 
-    // The timer counts down the current slide's remaining time and stops while paused or held;
-    // the progress bar is only its picture, paused by the same attributes in CSS. While it is
-    // stopped, screen readers announce the slides that visitors pick.
+    // Lays every slide out for good. The picked one stays where the ticker showed it while the
+    // rest open up around it, and takes the focus so the keyboard carries on from there.
+    #expand(index: number) {
+      const slide = this.#slides[index];
+      const top = slide.getBoundingClientRect().top;
+      clearTimeout(this.#timer);
+      this.toggleAttribute('data-expanded', true);
+      this.#slides.forEach((s) => s.removeAttribute('data-active'));
+      this.querySelector<HTMLElement>('.controls')!.hidden = true;
+      this.querySelector('.ticker')!.removeAttribute('aria-roledescription');
+      window.scrollBy(0, slide.getBoundingClientRect().top - top);
+      slide.tabIndex = -1;
+      slide.focus({ preventScroll: true });
+    }
+
+    // The timer counts down the current slide's remaining time and stops while paused, held or
+    // expanded; the progress bar is only its picture, paused by the same attributes in CSS.
+    // Screen readers are not told of the turns: no visitor makes them, so they would only interrupt.
     #sync() {
       if (this.#startedAt) this.#remaining -= performance.now() - this.#startedAt;
       this.#startedAt = 0;
       clearTimeout(this.#timer);
-      const stopped = this.matches('[data-paused], [data-held]');
-      this.#track.setAttribute('aria-live', stopped ? 'polite' : 'off');
-      if (stopped) return;
+      if (this.matches('[data-paused], [data-held], [data-expanded]')) return;
       this.#startedAt = performance.now();
       this.#timer = window.setTimeout(() => this.#show(this.#index + 1), Math.max(0, this.#remaining));
     }
