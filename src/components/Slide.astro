@@ -1,21 +1,12 @@
 ---
-// One carousel item. `requiresScript` hides slides that are meaningless without JavaScript,
-// like a live clock.
+// One carousel item.
 interface Props {
   label: string;
-  requiresScript?: boolean;
 }
 
-const { label, requiresScript = false } = Astro.props;
+const { label } = Astro.props;
 ---
 
-<li
-  class="slide"
-  role="group"
-  aria-roledescription="slide"
-  aria-label={label}
-  data-requires-script={requiresScript || undefined}
-  hidden={requiresScript}
->
+<li class="slide" role="group" aria-roledescription="slide" aria-label={label}>
   <slot />
 </li>

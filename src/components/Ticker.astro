@@ -98,10 +98,6 @@ import { CAROUSEL } from '../config';
     bottom: -1px;
   }
 
-  .track > :global(.slide[hidden]) {
-    display: none;
-  }
-
   /* Dots under the slides where the browser can draw CSS carousels by itself */
   @supports selector(::scroll-marker) {
     .track {
@@ -236,7 +232,6 @@ import { CAROUSEL } from '../config';
       this.#track = this.querySelector<HTMLElement>('.track')!;
       this.#slides = [...this.#track.querySelectorAll<HTMLElement>(':scope > .slide')];
       this.#slides.forEach((s, i) => {
-        s.hidden = false;
         s.setAttribute('aria-label', `${i + 1} of ${this.#slides.length}: ${s.getAttribute('aria-label')}`);
       });
 
