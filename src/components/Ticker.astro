@@ -417,13 +417,18 @@ import { CAROUSEL } from '../config';
       // lands. The picked one keeps still, unless no scrolling could hold it. Every shadow starts
       // reaching as far past its slide and draws in at an even pace, till the slide hides it, blur
       // and all. Only translate, scale and opacity are animated, which the compositor runs in step
-      // with the card; the order the slides overlap in is set on the side for as long as they move.
+      // with the card. For as long as they move, the order the slides overlap in is set on the side,
+      // and the rules between them are made clear, keeping their pixel so nothing measured shifts.
       const tops = this.#slides.map((s) => s.getBoundingClientRect().top);
       const blur = parseFloat(getComputedStyle(this).getPropertyValue('--shade'));
       this.#slides.forEach((s, i) => {
         s.style.zIndex = String(this.#slides.length - Math.abs(i - index));
+        s.style.borderTopColor = 'transparent';
         const spread = s.animate({ translate: [`0 ${top - tops[i]}px`, '0 0'] }, timing);
-        spread.onfinish = () => s.style.removeProperty('z-index');
+        spread.onfinish = () => {
+          s.style.removeProperty('z-index');
+          s.style.removeProperty('border-top-color');
+        };
         const { offsetWidth: w, offsetHeight: h } = s;
         const lifted = `${(w + 4 * blur) / w} ${(h + 4 * blur) / h}`;
         const landed = `${w / (w + 6 * blur)} ${h / (h + 6 * blur)}`;
