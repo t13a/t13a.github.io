@@ -3,8 +3,8 @@ import { CAROUSEL } from '../config';
 
 // Without JavaScript this is a CSS scroll-snap carousel of every slide. The script turns it into
 // an auto-advancing ticker that shows the slides one at a time, in the order they are written,
-// with a progress bar. To read at one's own pace, Show all lays every slide out in a list, and so
-// does a segment of the bar, keeping its own slide where the ticker was.
+// with a progress bar. To read at one's own pace, Show all lays every slide out in a list, keeping
+// the current one where the ticker was; a segment of the bar does the same for its own slide.
 ---
 
 <live-ticker style={`--slide-duration: ${CAROUSEL.slideSeconds}s`}>
@@ -294,7 +294,7 @@ import { CAROUSEL } from '../config';
         return button;
       });
 
-      this.querySelector('.all')!.addEventListener('click', () => this.#expand(0));
+      this.querySelector('.all')!.addEventListener('click', () => this.#expand(this.#index));
 
       // Without motion the ticker stays on its first slide.
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) this.toggleAttribute('data-paused', true);
